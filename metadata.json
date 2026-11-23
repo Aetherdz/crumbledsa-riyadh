@@ -1,0 +1,6 @@
+{
+  "name": "Crumbled | كرمبلد",
+  "description": "Crumbled | كرمبلد — Mouthful & Delightful. Riyadh dessert boutique on Prince Turki Road, Al Mohammadiyyah.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
