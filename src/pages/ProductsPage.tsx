@@ -166,7 +166,7 @@ export function ProductsPage({
         </div>
       )}
 
-      {/* Signature Cakes & Sweets — Unified 4:3 Food-Focused Cards (Name + Functional Tag + Order CTA Only) */}
+      {/* Signature Cakes & Sweets — Unified 4:5 Vertical Cards Matching 1080x1350 Posters */}
       {signatureItems.length > 0 && (
         <section className="space-y-6">
           <h2
@@ -191,7 +191,7 @@ export function ProductsPage({
                       type="button"
                       onClick={() => photoIdx >= 0 && onOpenPhoto(photoIdx)}
                       aria-label={`${t.actions.zoomPhotoAria}: ${itemName}`}
-                      className="relative w-full aspect-[4/3] overflow-hidden bg-[#EDE5D5] dark:bg-[#0B1C2E] cursor-pointer"
+                      className="relative w-full aspect-[4/5] overflow-hidden bg-[#EDE5D5] dark:bg-[#0B1C2E] cursor-pointer"
                     >
                       <PhotoFrame
                         src={item.photoUrl}
@@ -199,7 +199,7 @@ export function ProductsPage({
                         fallbackTitle={itemName}
                         fit="cover"
                         objectPosition="object-center"
-                        className="w-full h-full"
+                        className="w-full h-full bg-[#EDE5D5] dark:bg-[#0B1C2E]"
                         imgClassName="group-hover:scale-[1.02] transition-transform duration-500 motion-reduce:transition-none"
                       />
                       <span

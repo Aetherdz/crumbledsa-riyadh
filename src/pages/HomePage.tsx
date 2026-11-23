@@ -49,15 +49,16 @@ export function HomePage({ lang, onNavigate }: HomePageProps) {
       <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-10 space-y-4">
         <div className="relative overflow-hidden rounded-2xl bg-[#0F2A44] text-[#FAF6EE] border-2 border-[#C9A45C]/55 shadow-md">
           <div className="grid grid-cols-1 lg:grid-cols-12 min-h-[500px] lg:min-h-[560px]">
-            {/* Single Static Cloud Cake Photo */}
-            <div className="relative order-1 lg:order-2 lg:col-span-6 min-h-[280px] sm:min-h-[360px] lg:min-h-full">
+            {/* Single Static Cloud Cake Photo — Framed on Cake, Bowl & Hands Only (Top Printed Text Cropped Out) */}
+            <div className="relative order-1 lg:order-2 lg:col-span-6 aspect-[4/3] lg:aspect-auto lg:min-h-full overflow-hidden bg-[#0F2A44]">
               <PhotoFrame
                 src={heroPhoto.url}
                 alt={heroPhotoName}
                 fallbackTitle={heroPhotoName}
-                className="w-full h-full"
+                className="w-full h-full bg-[#0F2A44] dark:bg-[#0F2A44]"
                 fit="cover"
-                objectPosition="object-center"
+                objectPosition="object-bottom"
+                imgClassName="origin-bottom scale-[1.12] lg:scale-[1.48]"
                 priority
               />
               <div
