@@ -143,18 +143,13 @@ export function GalleryPage({ lang, onOpenPhoto }: GalleryPageProps) {
                   </span>
                 </div>
                 <figcaption className="p-5 flex items-baseline justify-between gap-4">
-                  <div className="space-y-1">
-                    <p
-                      className={`font-semibold text-[#0F2A44] dark:text-[#FAF6EE] ${
-                        isFeaturedFirst ? 'text-lg sm:text-xl' : 'text-base'
-                      }`}
-                    >
-                      {lang === 'ar' ? photo.titleAr : photo.titleEn}
-                    </p>
-                    <p className="text-xs sm:text-sm text-[#0F2A44]/75 dark:text-[#D5D0C6]">
-                      {lang === 'ar' ? photo.captionAr : photo.captionEn}
-                    </p>
-                  </div>
+                  <p
+                    className={`font-semibold text-[#0F2A44] dark:text-[#FAF6EE] ${
+                      isFeaturedFirst ? 'text-lg sm:text-xl' : 'text-base'
+                    }`}
+                  >
+                    {lang === 'ar' ? photo.titleAr : photo.titleEn}
+                  </p>
                   <span className="text-xs font-medium text-[#0F2A44]/60 dark:text-[#CBD5E1] tabular-nums shrink-0">
                     0{originalIndex + 1}
                   </span>

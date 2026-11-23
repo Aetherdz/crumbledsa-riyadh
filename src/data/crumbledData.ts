@@ -263,6 +263,7 @@ export const COPY = {
       orderHub: 'مركز الطلب',
       instagramDm: 'رسائل إنستغرام',
       viewProducts: 'تصفح المنتجات',
+      showProducts: 'عرض المنتجات',
       viewGallery: 'عرض المعرض الكامل',
       visitUs: 'التواصل وزيارتنا',
       copyAddress: 'نسخ العنوان',
@@ -288,6 +289,7 @@ export const COPY = {
     },
     home: {
       heroLine: 'Cloud Cake وكيك المناسبات والكتابة على الكيك حسب الطلب',
+      servicesSummaryLine: 'كيك مخصص وثلاثي الأبعاد، ضيافة، كتابة على الكيك',
       heroAddressShort: 'طريق الأمير تركي، المحمدية، الرياض',
       serviceZones: {
         cloudCake: 'Cloud Cake',
@@ -369,6 +371,8 @@ export const COPY = {
       bioLabel: 'من سيرة حساب إنستغرام',
       bioText: 'يوجد لدينا كتابة على الكيك حسب طلبكم',
       instagramAccountLabel: '@crumbledsa',
+      composerRedirectLine: 'للكيك المخصص وثلاثي الأبعاد والكتابة على الكيك والضيافة:',
+      composerRedirectButton: 'جهّز طلبك في صفحة المنتجات',
     },
     footer: {
       locationShort: 'المحمدية، الرياض',
@@ -388,6 +392,7 @@ export const COPY = {
       orderHub: 'Order Hub',
       instagramDm: 'Instagram DM',
       viewProducts: 'Explore Products',
+      showProducts: 'View Products',
       viewGallery: 'View Full Gallery',
       visitUs: 'Contact & Visit',
       copyAddress: 'Copy Address',
@@ -413,6 +418,7 @@ export const COPY = {
     },
     home: {
       heroLine: 'Cloud Cake, occasion cakes, and custom cake inscriptions',
+      servicesSummaryLine: 'Custom & 3D cakes, catering, cake inscriptions',
       heroAddressShort: 'Prince Turki Road, Al Mohammadiyyah, Riyadh',
       serviceZones: {
         cloudCake: 'Cloud Cake',
@@ -495,6 +501,8 @@ export const COPY = {
       bioLabel: 'From Instagram bio',
       bioText: 'Custom cake inscriptions available upon your request',
       instagramAccountLabel: '@crumbledsa',
+      composerRedirectLine: 'For custom & 3D cakes, cake inscriptions, and catering:',
+      composerRedirectButton: 'Prepare your request on the Products page',
     },
     footer: {
       locationShort: 'Al Mohammadiyyah, Riyadh',

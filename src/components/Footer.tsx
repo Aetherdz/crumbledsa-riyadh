@@ -58,20 +58,11 @@ export function Footer({ lang, onNavigate }: FooterProps) {
             </div>
           </div>
 
-          {/* Verified Location, Rating, Direct Links & Delivery Apps (text only) */}
-          <div className="space-y-4">
-            <div className="space-y-1.5 text-sm text-[#0F2A44]/85 dark:text-[#F4EFE4]/85">
-              <p className="font-medium text-[#0F2A44] dark:text-[#FAF6EE]">
-                {t.footer.locationShort}
-              </p>
-              <p dir="ltr" className="text-xs leading-relaxed text-start">
-                {VERIFIED_INFO.addressEn}
-              </p>
-              <p className="text-xs font-medium text-[#0F2A44]/80 dark:text-[#E2DDD2] tabular-nums">
-                {t.footer.ratingShort}
-              </p>
-            </div>
-
+          {/* Direct Verified Links: Instagram & Order Hub ONLY */}
+          <div className="space-y-3">
+            <p className="text-xs font-semibold text-[#0F2A44]/70 dark:text-[#CBD5E1]">
+              {lang === 'ar' ? 'الروابط المباشرة' : 'Direct Links'}
+            </p>
             <div className="flex items-center gap-2.5">
               <a
                 href={VERIFIED_LINKS.instagram}
@@ -93,16 +84,6 @@ export function Footer({ lang, onNavigate }: FooterProps) {
               >
                 <ExternalLink className="w-[17px] h-[17px]" aria-hidden="true" />
               </a>
-            </div>
-
-            <div className="text-xs text-[#0F2A44]/75 dark:text-[#F4EFE4]/75">
-              <span>{t.footer.deliveryLabel}: </span>
-              <span
-                dir="ltr"
-                className="font-medium text-[#0F2A44] dark:text-[#FAF6EE]"
-              >
-                {VERIFIED_INFO.deliveryApps.join(' · ')}
-              </span>
             </div>
           </div>
         </div>

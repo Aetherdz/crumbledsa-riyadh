@@ -131,12 +131,7 @@ export default function App() {
 
       <main className="flex-1">
         {page === 'home' && (
-          <HomePage
-            lang={lang}
-            onNavigate={handleNavigate}
-            onOpenComposer={handleOpenComposer}
-            onOpenPhoto={setLightboxIndex}
-          />
+          <HomePage lang={lang} onNavigate={handleNavigate} />
         )}
         {page === 'products' && (
           <ProductsPage
@@ -148,7 +143,9 @@ export default function App() {
         {page === 'gallery' && (
           <GalleryPage lang={lang} onOpenPhoto={setLightboxIndex} />
         )}
-        {page === 'contact' && <ContactPage lang={lang} />}
+        {page === 'contact' && (
+          <ContactPage lang={lang} onOpenComposer={handleOpenComposer} />
+        )}
       </main>
 
       <Footer lang={lang} onNavigate={handleNavigate} />

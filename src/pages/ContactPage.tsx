@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import {
+  ArrowLeft,
+  ArrowRight,
   Check,
   Copy,
   ExternalLink,
@@ -11,18 +13,20 @@ import {
   COPY,
   VERIFIED_INFO,
   VERIFIED_LINKS,
+  type CustomServiceKey,
   type Language,
 } from '../data/crumbledData';
 import { BrandBadge } from '../components/BrandBadge';
-import { CustomOrdersComposer } from '../components/CustomOrdersComposer';
 
 interface ContactPageProps {
   lang: Language;
+  onOpenComposer: (service: CustomServiceKey) => void;
 }
 
-export function ContactPage({ lang }: ContactPageProps) {
+export function ContactPage({ lang, onOpenComposer }: ContactPageProps) {
   const [copied, setCopied] = useState(false);
   const t = COPY[lang];
+  const DirectionArrow = lang === 'ar' ? ArrowLeft : ArrowRight;
 
   const handleCopyAddress = async () => {
     try {
@@ -253,8 +257,20 @@ export function ContactPage({ lang }: ContactPageProps) {
         </section>
       </div>
 
-      {/* Custom Orders & Catering Message Composer */}
-      <CustomOrdersComposer lang={lang} />
+      {/* Single-Line Redirect to Composer on Products Page */}
+      <section className="rounded-2xl px-6 py-5 sm:px-8 sm:py-6 bg-white dark:bg-[#0E2236] border border-[#0F2A44]/15 dark:border-[#F4EFE4]/15 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <p className="text-sm sm:text-base font-medium text-[#0F2A44] dark:text-[#FAF6EE]">
+          {t.contact.composerRedirectLine}
+        </p>
+        <button
+          type="button"
+          onClick={() => onOpenComposer('inscription')}
+          className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-sm font-semibold bg-[#0F2A44] text-[#FAF6EE] hover:bg-[#17395B] dark:bg-[#FAF6EE] dark:text-[#081523] dark:hover:bg-[#E6E0D5] transition-colors cursor-pointer whitespace-nowrap shrink-0 self-start sm:self-auto"
+        >
+          <span>{t.contact.composerRedirectButton}</span>
+          <DirectionArrow className="w-4 h-4" aria-hidden="true" />
+        </button>
+      </section>
     </div>
   );
 }
