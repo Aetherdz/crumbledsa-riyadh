@@ -550,55 +550,56 @@ export function HomePage({
       {/* 5. FAQ Accordion — 4 Verified Questions */}
       <FaqAccordion lang={lang} />
 
-      {/* 6. Simplified Visit Card: زورونا + Address + Directions & Copy Only */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="rounded-2xl p-7 sm:p-9 bg-[#F3ECE0] dark:bg-[#0E2236] border border-[#0F2A44]/15 dark:border-[#F4EFE4]/15 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-          <div className="space-y-2 max-w-2xl">
-            <h2
-              className={`text-2xl sm:text-3xl font-bold text-[#0F2A44] dark:text-[#FAF6EE] ${
-                lang === 'ar' ? 'font-display-ar' : 'font-display-en'
-              }`}
-            >
-              {t.home.visitHeading}
-            </h2>
-            <p className="text-base font-medium text-[#0F2A44] dark:text-[#FAF6EE]">
-              {lang === 'ar' ? VERIFIED_INFO.addressAr : VERIFIED_INFO.addressEn}
-            </p>
-            {lang === 'ar' && (
-              <p
-                dir="ltr"
-                className="text-xs sm:text-sm text-[#0F2A44]/75 dark:text-[#D5D0C6] text-start"
-              >
-                {VERIFIED_INFO.addressEn}
-              </p>
-            )}
-          </div>
+      {/* 6. Visit Card — Full-Width Navy Card, Thin Gold Border, Exact Verified Order */}
+      <section
+        aria-label={t.home.visitHeading}
+        className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8"
+      >
+        <div className="w-full rounded-2xl p-6 sm:p-9 bg-[#0F2A44] text-[#FAF6EE] border border-[#C9A45C] space-y-6">
+          <p className="text-base sm:text-xl font-medium leading-relaxed text-[#FAF6EE] break-words">
+            {lang === 'ar' ? VERIFIED_INFO.addressAr : VERIFIED_INFO.addressEn}
+          </p>
 
-          <div className="flex flex-wrap items-center gap-3 shrink-0">
+          <div>
             <a
               href={VERIFIED_LINKS.googleMapsSearch}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-sm font-semibold bg-[#D4AE5E] text-[#081523] hover:bg-[#E0BE74] transition-colors whitespace-nowrap"
+              className="inline-flex items-center gap-2 text-base font-semibold text-[#FAF6EE] hover:underline underline-offset-4 tabular-nums"
             >
-              <MapPin className="w-4 h-4 shrink-0" aria-hidden="true" />
-              <span>{t.actions.directions}</span>
+              <Star
+                className="w-4 h-4 fill-[#D8B66E] text-[#D8B66E] shrink-0"
+                aria-hidden="true"
+              />
+              <span>{t.home.ratingText}</span>
+            </a>
+          </div>
+
+          <div className="flex flex-col gap-3">
+            <a
+              href={VERIFIED_LINKS.googleMapsSearch}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full h-14 min-h-[56px] px-6 rounded-xl inline-flex items-center justify-center gap-2.5 text-base font-semibold bg-[#D4AE5E] text-[#081523] hover:bg-[#E0BE74] transition-colors"
+            >
+              <MapPin className="w-5 h-5 shrink-0" aria-hidden="true" />
+              <span>{t.actions.openInGoogleMaps}</span>
             </a>
 
             <button
               type="button"
               onClick={handleCopyAddress}
               aria-live="polite"
-              className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full text-sm font-medium border-2 border-[#0F2A44]/25 dark:border-[#F4EFE4]/30 text-[#0F2A44] dark:text-[#FAF6EE] hover:border-[#0F2A44] dark:hover:border-[#FAF6EE] transition-colors cursor-pointer whitespace-nowrap"
+              className="w-full h-14 min-h-[56px] px-6 rounded-xl inline-flex items-center justify-center gap-2.5 text-base font-medium border-2 border-[#FAF6EE]/35 bg-[#143454] text-[#FAF6EE] hover:bg-[#1A426A] transition-colors cursor-pointer"
             >
               {addressCopied ? (
                 <>
-                  <Check className="w-4 h-4 shrink-0" aria-hidden="true" />
+                  <Check className="w-5 h-5 shrink-0" aria-hidden="true" />
                   <span>{t.actions.addressCopied}</span>
                 </>
               ) : (
                 <>
-                  <Copy className="w-4 h-4 shrink-0" aria-hidden="true" />
+                  <Copy className="w-5 h-5 shrink-0" aria-hidden="true" />
                   <span>{t.actions.copyAddress}</span>
                 </>
               )}
