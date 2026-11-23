@@ -22,31 +22,26 @@ export function Footer({ lang, onNavigate }: FooterProps) {
     <footer className="mt-20 border-t border-[#0F2A44]/10 dark:border-[#C9A45C]/15 bg-[#F3ECE0] dark:bg-[#06111D]">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10 items-start">
-          {/* Brand Anchor */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-3.5">
-              <BrandBadge size="md" />
-              <div className="space-y-0.5">
-                <p
-                  className={`text-xl font-bold text-[#0F2A44] dark:text-[#FAF6EE] ${
-                    lang === 'ar' ? 'font-display-ar' : 'font-display-en'
-                  }`}
-                >
-                  {VERIFIED_INFO.brandFull}
-                </p>
-                <p className="text-xs font-medium tracking-wider text-[#9A742B] dark:text-[#D8B66E] font-display-en">
-                  {VERIFIED_INFO.tagline}
-                </p>
-              </div>
+          {/* Brand Anchor: Brand name & Mouthful & Delightful ONLY */}
+          <div className="flex items-center gap-3.5">
+            <BrandBadge size="md" />
+            <div className="space-y-0.5">
+              <p
+                className={`text-xl font-bold text-[#0F2A44] dark:text-[#FAF6EE] ${
+                  lang === 'ar' ? 'font-display-ar' : 'font-display-en'
+                }`}
+              >
+                {VERIFIED_INFO.brandFull}
+              </p>
+              <p className="text-xs font-medium tracking-wider text-[#0F2A44]/75 dark:text-[#D9D2C5] font-display-en">
+                {VERIFIED_INFO.tagline}
+              </p>
             </div>
-            <p className="text-sm text-[#0F2A44]/75 dark:text-[#F4EFE4]/75 leading-relaxed">
-              {t.home.inscriptionNote}
-            </p>
           </div>
 
           {/* Site Navigation */}
           <div className="space-y-3">
-            <p className="text-xs font-semibold text-[#9A742B] dark:text-[#D8B66E]">
+            <p className="text-xs font-semibold text-[#0F2A44]/70 dark:text-[#CBD5E1]">
               {lang === 'ar' ? 'الصفحات' : 'Pages'}
             </p>
             <div className="grid grid-cols-2 gap-y-2.5 gap-x-4">
@@ -55,7 +50,7 @@ export function Footer({ lang, onNavigate }: FooterProps) {
                   key={pageKey}
                   type="button"
                   onClick={() => onNavigate(pageKey)}
-                  className="text-start text-sm text-[#0F2A44]/80 dark:text-[#F4EFE4]/80 hover:text-[#0F2A44] dark:hover:text-[#D8B66E] transition-colors cursor-pointer"
+                  className="text-start text-sm text-[#0F2A44]/85 dark:text-[#F4EFE4]/85 hover:text-[#0F2A44] dark:hover:text-white transition-colors cursor-pointer"
                 >
                   {t.nav[pageKey]}
                 </button>
@@ -65,14 +60,14 @@ export function Footer({ lang, onNavigate }: FooterProps) {
 
           {/* Verified Location, Rating, Direct Links & Delivery Apps (text only) */}
           <div className="space-y-4">
-            <div className="space-y-1.5 text-sm text-[#0F2A44]/80 dark:text-[#F4EFE4]/80">
+            <div className="space-y-1.5 text-sm text-[#0F2A44]/85 dark:text-[#F4EFE4]/85">
               <p className="font-medium text-[#0F2A44] dark:text-[#FAF6EE]">
                 {t.footer.locationShort}
               </p>
               <p dir="ltr" className="text-xs leading-relaxed text-start">
                 {VERIFIED_INFO.addressEn}
               </p>
-              <p className="text-xs font-medium text-[#9A742B] dark:text-[#D8B66E] tabular-nums">
+              <p className="text-xs font-medium text-[#0F2A44]/80 dark:text-[#E2DDD2] tabular-nums">
                 {t.footer.ratingShort}
               </p>
             </div>
@@ -84,7 +79,7 @@ export function Footer({ lang, onNavigate }: FooterProps) {
                 rel="noopener noreferrer"
                 aria-label={t.actions.instagramDm}
                 title={t.actions.instagramDm}
-                className="w-10 h-10 rounded-full flex items-center justify-center bg-[#0F2A44] text-[#D8B66E] hover:bg-[#17395C] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C9A45C]"
+                className="w-10 h-10 rounded-full flex items-center justify-center bg-[#0F2A44] text-[#FAF6EE] hover:bg-[#17395C] dark:bg-[#163452] dark:hover:bg-[#1D4266] transition-colors"
               >
                 <Instagram className="w-[18px] h-[18px]" aria-hidden="true" />
               </a>
@@ -94,15 +89,18 @@ export function Footer({ lang, onNavigate }: FooterProps) {
                 rel="noopener noreferrer"
                 aria-label={t.actions.orderHub}
                 title={t.actions.orderHub}
-                className="w-10 h-10 rounded-full flex items-center justify-center border border-[#0F2A44]/20 dark:border-[#C9A45C]/35 bg-white dark:bg-[#0F2438] text-[#0F2A44] dark:text-[#D8B66E] hover:border-[#C9A45C] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C9A45C]"
+                className="w-10 h-10 rounded-full flex items-center justify-center border-2 border-[#0F2A44]/25 dark:border-[#F4EFE4]/25 bg-white dark:bg-[#0F2438] text-[#0F2A44] dark:text-[#FAF6EE] hover:border-[#0F2A44] dark:hover:border-[#FAF6EE] transition-colors"
               >
                 <ExternalLink className="w-[17px] h-[17px]" aria-hidden="true" />
               </a>
             </div>
 
-            <div className="text-xs text-[#0F2A44]/70 dark:text-[#F4EFE4]/70">
+            <div className="text-xs text-[#0F2A44]/75 dark:text-[#F4EFE4]/75">
               <span>{t.footer.deliveryLabel}: </span>
-              <span dir="ltr" className="font-medium text-[#0F2A44] dark:text-[#F4EFE4]">
+              <span
+                dir="ltr"
+                className="font-medium text-[#0F2A44] dark:text-[#FAF6EE]"
+              >
                 {VERIFIED_INFO.deliveryApps.join(' · ')}
               </span>
             </div>

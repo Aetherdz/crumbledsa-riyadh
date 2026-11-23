@@ -46,7 +46,7 @@ export function GalleryPage({ lang, onOpenPhoto }: GalleryPageProps) {
               </p>
             </div>
           </div>
-          <p className="text-xs text-[#9A742B] dark:text-[#D8B66E]">
+          <p className="text-xs font-medium text-[#0F2A44]/70 dark:text-[#CBD5E1]">
             {t.gallery.tapHint}
           </p>
         </div>
@@ -55,7 +55,7 @@ export function GalleryPage({ lang, onOpenPhoto }: GalleryPageProps) {
         <div
           role="tablist"
           aria-label={t.gallery.title}
-          className="inline-flex items-center gap-1 p-1 rounded-full bg-[#EFE7D8] dark:bg-[#0E2236] border border-[#0F2A44]/10 dark:border-[#C9A45C]/20"
+          className="inline-flex items-center gap-1 p-1 rounded-full bg-[#EFE7D8] dark:bg-[#0E2236] border border-[#0F2A44]/15 dark:border-[#F4EFE4]/15"
         >
           {(
             [
@@ -74,8 +74,8 @@ export function GalleryPage({ lang, onOpenPhoto }: GalleryPageProps) {
                 onClick={() => setCategory(tab.key)}
                 className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap shrink-0 transition-colors cursor-pointer ${
                   active
-                    ? 'bg-[#0F2A44] text-[#FAF6EE] dark:bg-[#C9A45C] dark:text-[#081523]'
-                    : 'text-[#0F2A44]/75 dark:text-[#F4EFE4]/75 hover:text-[#0F2A44] dark:hover:text-[#FAF6EE]'
+                    ? 'bg-[#0F2A44] text-[#FAF6EE] dark:bg-[#FAF6EE] dark:text-[#081523]'
+                    : 'text-[#0F2A44]/80 dark:text-[#E2DDD2] hover:text-[#0F2A44] dark:hover:text-white'
                 }`}
               >
                 {tab.label}
@@ -85,19 +85,37 @@ export function GalleryPage({ lang, onOpenPhoto }: GalleryPageProps) {
         </div>
       </header>
 
-      {/* Editorial Grid of the 5 Real Photographs Only */}
-      <section className="grid grid-cols-1 md:grid-cols-6 gap-6">
+      {/* Unequal Editorial Grid (First Photo Larger on Desktop) */}
+      <section className="grid grid-cols-1 md:grid-cols-12 gap-6 items-stretch">
         {visiblePhotos.map(({ photo, originalIndex }, idx) => {
-          const isLead =
-            category === 'all'
-              ? idx < 2
-              : visiblePhotos.length === 2;
+          const isFeaturedFirst = idx === 0;
+          const colSpanClass =
+            visiblePhotos.length === 2
+              ? isFeaturedFirst
+                ? 'md:col-span-7'
+                : 'md:col-span-5'
+              : visiblePhotos.length === 3
+                ? isFeaturedFirst
+                  ? 'md:col-span-7'
+                  : idx === 1
+                    ? 'md:col-span-5'
+                    : 'md:col-span-12'
+                : isFeaturedFirst
+                  ? 'md:col-span-8'
+                  : idx === 1
+                    ? 'md:col-span-4'
+                    : 'md:col-span-4';
+
+          const aspectClass = isFeaturedFirst
+            ? 'aspect-[4/3] md:aspect-[16/10]'
+            : idx === 1
+              ? 'aspect-[4/3] md:aspect-auto md:h-full md:min-h-[340px]'
+              : 'aspect-[4/5]';
+
           return (
             <figure
               key={photo.id}
-              className={`group rounded-2xl overflow-hidden bg-white dark:bg-[#0E2236] border border-[#0F2A44]/10 dark:border-[#C9A45C]/15 ${
-                isLead ? 'md:col-span-3' : 'md:col-span-2'
-              }`}
+              className={`group rounded-2xl overflow-hidden bg-white dark:bg-[#0E2236] border border-[#0F2A44]/15 dark:border-[#F4EFE4]/15 flex flex-col ${colSpanClass}`}
             >
               <button
                 type="button"
@@ -105,13 +123,9 @@ export function GalleryPage({ lang, onOpenPhoto }: GalleryPageProps) {
                 aria-label={`${t.actions.zoomPhotoAria}: ${
                   lang === 'ar' ? photo.titleAr : photo.titleEn
                 }`}
-                className="block w-full text-start cursor-pointer focus-visible:outline-2 focus-visible:outline-inset focus-visible:outline-[#C9A45C]"
+                className="flex flex-col flex-1 w-full text-start cursor-pointer"
               >
-                <div
-                  className={`relative overflow-hidden ${
-                    isLead ? 'aspect-[4/3]' : 'aspect-[4/5]'
-                  }`}
-                >
+                <div className={`relative w-full overflow-hidden flex-1 ${aspectClass}`}>
                   <PhotoFrame
                     src={photo.url}
                     alt={lang === 'ar' ? photo.altAr : photo.altEn}
@@ -120,25 +134,28 @@ export function GalleryPage({ lang, onOpenPhoto }: GalleryPageProps) {
                     }
                     className="w-full h-full"
                     imgClassName="group-hover:scale-[1.03] transition-transform duration-500 motion-reduce:transition-none"
-                    priority={originalIndex === 0}
                   />
                   <span
                     aria-hidden="true"
-                    className="absolute top-4 end-4 w-10 h-10 rounded-full flex items-center justify-center bg-[#0F2A44]/85 text-[#D8B66E] border border-[#C9A45C]/35 transition-transform duration-200 group-hover:scale-105 motion-reduce:transition-none"
+                    className="absolute top-4 end-4 w-10 h-10 rounded-full flex items-center justify-center bg-[#0F2A44]/85 text-[#FAF6EE] border border-[#FAF6EE]/30 transition-transform duration-200 group-hover:scale-105 motion-reduce:transition-none"
                   >
                     <Maximize2 className="w-4 h-4" />
                   </span>
                 </div>
                 <figcaption className="p-5 flex items-baseline justify-between gap-4">
                   <div className="space-y-1">
-                    <p className="text-base font-semibold text-[#0F2A44] dark:text-[#FAF6EE]">
+                    <p
+                      className={`font-semibold text-[#0F2A44] dark:text-[#FAF6EE] ${
+                        isFeaturedFirst ? 'text-lg sm:text-xl' : 'text-base'
+                      }`}
+                    >
                       {lang === 'ar' ? photo.titleAr : photo.titleEn}
                     </p>
-                    <p className="text-xs sm:text-sm text-[#0F2A44]/70 dark:text-[#F4EFE4]/70">
+                    <p className="text-xs sm:text-sm text-[#0F2A44]/75 dark:text-[#D5D0C6]">
                       {lang === 'ar' ? photo.captionAr : photo.captionEn}
                     </p>
                   </div>
-                  <span className="text-xs text-[#9A742B] dark:text-[#D8B66E] tabular-nums shrink-0">
+                  <span className="text-xs font-medium text-[#0F2A44]/60 dark:text-[#CBD5E1] tabular-nums shrink-0">
                     0{originalIndex + 1}
                   </span>
                 </figcaption>
@@ -149,15 +166,15 @@ export function GalleryPage({ lang, onOpenPhoto }: GalleryPageProps) {
       </section>
 
       {/* Quiet Instagram DM Footer Bar */}
-      <div className="rounded-xl p-6 bg-[#F3ECE0] dark:bg-[#0E2236] border border-[#0F2A44]/10 dark:border-[#C9A45C]/15 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <p className="text-sm text-[#0F2A44]/85 dark:text-[#F4EFE4]/85">
+      <div className="rounded-xl p-6 bg-[#F3ECE0] dark:bg-[#0E2236] border border-[#0F2A44]/15 dark:border-[#F4EFE4]/15 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <p className="text-sm text-[#0F2A44]/85 dark:text-[#E2DDD2]">
           {t.gallery.followPrompt}
         </p>
         <a
           href={VERIFIED_LINKS.instagram}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium bg-[#0F2A44] text-[#FAF6EE] hover:bg-[#17395B] dark:bg-[#C9A45C] dark:text-[#081523] dark:hover:bg-[#D8B66E] transition-colors whitespace-nowrap self-start sm:self-auto"
+          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold bg-[#D4AE5E] text-[#081523] hover:bg-[#E0BE74] transition-colors whitespace-nowrap self-start sm:self-auto"
         >
           <Instagram className="w-4 h-4" aria-hidden="true" />
           <span>{t.actions.instagramDm}</span>

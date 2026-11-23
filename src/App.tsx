@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import {
   COPY,
   REAL_PHOTOS,
+  type CustomServiceKey,
   type Language,
   type PageKey,
 } from './data/crumbledData';
@@ -48,6 +49,8 @@ export default function App() {
     }
   });
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const [composerService, setComposerService] =
+    useState<CustomServiceKey>('inscription');
 
   useEffect(() => {
     const html = document.documentElement;
@@ -92,6 +95,21 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleOpenComposer = (service: CustomServiceKey) => {
+    setComposerService(service);
+    setPage('products');
+    const nextHash = PAGE_TO_HASH.products;
+    if (window.location.hash !== nextHash) {
+      window.history.pushState(null, '', nextHash);
+    }
+    window.requestAnimationFrame(() => {
+      const target = document.getElementById('custom-composer');
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  };
+
   const handleToggleLang = () => {
     setLang((prev) => (prev === 'ar' ? 'en' : 'ar'));
   };
@@ -116,11 +134,16 @@ export default function App() {
           <HomePage
             lang={lang}
             onNavigate={handleNavigate}
+            onOpenComposer={handleOpenComposer}
             onOpenPhoto={setLightboxIndex}
           />
         )}
         {page === 'products' && (
-          <ProductsPage lang={lang} onOpenPhoto={setLightboxIndex} />
+          <ProductsPage
+            lang={lang}
+            initialService={composerService}
+            onOpenPhoto={setLightboxIndex}
+          />
         )}
         {page === 'gallery' && (
           <GalleryPage lang={lang} onOpenPhoto={setLightboxIndex} />

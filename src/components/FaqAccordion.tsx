@@ -29,7 +29,7 @@ export function FaqAccordion({ lang }: FaqAccordionProps) {
         </p>
       </div>
 
-      <div className="rounded-2xl overflow-hidden bg-white dark:bg-[#0E2236] border border-[#0F2A44]/10 dark:border-[#C9A45C]/15 divide-y divide-[#0F2A44]/10 dark:divide-[#C9A45C]/15">
+      <div className="rounded-2xl overflow-hidden bg-white dark:bg-[#0E2236] border border-[#0F2A44]/15 dark:border-[#F4EFE4]/15 divide-y divide-[#0F2A44]/10 dark:divide-[#F4EFE4]/10">
         {VERIFIED_FAQS.map((item) => {
           const isOpen = openId === item.id;
           const panelId = `faq-panel-${item.id}`;
@@ -41,15 +41,17 @@ export function FaqAccordion({ lang }: FaqAccordionProps) {
                   aria-expanded={isOpen}
                   aria-controls={panelId}
                   onClick={() => toggleItem(item.id)}
-                  className="w-full px-6 py-5 text-start flex items-center justify-between gap-4 hover:bg-[#0F2A44]/[0.025] dark:hover:bg-white/[0.03] transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-inset focus-visible:outline-[#C9A45C]"
+                  className="w-full px-6 py-5 text-start flex items-center justify-between gap-4 hover:bg-[#0F2A44]/[0.025] dark:hover:bg-white/[0.03] transition-colors cursor-pointer"
                 >
                   <span className="text-base font-semibold text-[#0F2A44] dark:text-[#FAF6EE]">
                     {lang === 'ar' ? item.questionAr : item.questionEn}
                   </span>
                   <span
                     aria-hidden="true"
-                    className={`w-8 h-8 rounded-full shrink-0 flex items-center justify-center border border-[#0F2A44]/15 dark:border-[#C9A45C]/30 text-[#0F2A44] dark:text-[#D8B66E] transition-transform duration-200 motion-reduce:transition-none ${
-                      isOpen ? 'rotate-180 bg-[#0F2A44] text-[#D8B66E] dark:bg-[#173654]' : ''
+                    className={`w-8 h-8 rounded-full shrink-0 flex items-center justify-center border border-[#0F2A44]/20 dark:border-[#F4EFE4]/25 text-[#0F2A44] dark:text-[#FAF6EE] transition-transform duration-200 motion-reduce:transition-none ${
+                      isOpen
+                        ? 'rotate-180 bg-[#0F2A44] text-[#FAF6EE] dark:bg-[#FAF6EE] dark:text-[#081523]'
+                        : ''
                     }`}
                   >
                     <ChevronDown className="w-4 h-4" />
@@ -59,7 +61,7 @@ export function FaqAccordion({ lang }: FaqAccordionProps) {
               {isOpen && (
                 <div
                   id={panelId}
-                  className="px-6 pb-5 pt-0.5 text-sm sm:text-base text-[#0F2A44]/80 dark:text-[#F4EFE4]/80 leading-relaxed"
+                  className="px-6 pb-5 pt-0.5 text-sm sm:text-base text-[#0F2A44]/85 dark:text-[#E2DDD2] leading-relaxed"
                 >
                   {lang === 'ar' ? item.answerAr : item.answerEn}
                 </div>

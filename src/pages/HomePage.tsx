@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   ArrowLeft,
   ArrowRight,
+  Check,
   ChevronLeft,
   ChevronRight,
+  Copy,
   ExternalLink,
   Instagram,
   MapPin,
@@ -16,10 +18,10 @@ import {
   REAL_PHOTOS,
   VERIFIED_INFO,
   VERIFIED_LINKS,
+  type CustomServiceKey,
   type Language,
   type PageKey,
 } from '../data/crumbledData';
-import { BrandBadge } from '../components/BrandBadge';
 import { PhotoFrame } from '../components/PhotoFrame';
 import { HowToOrderSection } from '../components/HowToOrderSection';
 import { FaqAccordion } from '../components/FaqAccordion';
@@ -27,60 +29,101 @@ import { FaqAccordion } from '../components/FaqAccordion';
 interface HomePageProps {
   lang: Language;
   onNavigate: (page: PageKey) => void;
+  onOpenComposer: (service: CustomServiceKey) => void;
   onOpenPhoto: (index: number) => void;
 }
 
-export function HomePage({ lang, onNavigate, onOpenPhoto }: HomePageProps) {
+export function HomePage({
+  lang,
+  onNavigate,
+  onOpenComposer,
+  onOpenPhoto,
+}: HomePageProps) {
   const [heroIndex, setHeroIndex] = useState(0);
+  const [autoplayActive, setAutoplayActive] = useState(true);
+  const [addressCopied, setAddressCopied] = useState(false);
+  const heroStoppedRef = useRef(false);
+
   const t = COPY[lang];
   const isRtl = lang === 'ar';
   const DirectionArrow = isRtl ? ArrowLeft : ArrowRight;
 
+  const stopAutoplay = () => {
+    heroStoppedRef.current = true;
+    setAutoplayActive(false);
+  };
+
+  useEffect(() => {
+    if (!autoplayActive || heroStoppedRef.current) return;
+    if (
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    ) {
+      return;
+    }
+
+    const handleFirstScroll = () => {
+      if (window.scrollY > 40) {
+        stopAutoplay();
+      }
+    };
+
+    window.addEventListener('scroll', handleFirstScroll, { passive: true });
+    const intervalId = window.setInterval(() => {
+      if (!heroStoppedRef.current) {
+        setHeroIndex((prev) => (prev + 1) % REAL_PHOTOS.length);
+      }
+    }, 6000);
+
+    return () => {
+      window.removeEventListener('scroll', handleFirstScroll);
+      window.clearInterval(intervalId);
+    };
+  }, [autoplayActive]);
+
   const activeHeroPhoto = REAL_PHOTOS[heroIndex];
-  const showcasePhotos = REAL_PHOTOS.slice(1);
   const signatureProducts = PRODUCTS.filter((p) => p.category === 'signature');
   const bespokeProducts = PRODUCTS.filter((p) => p.category === 'bespoke');
 
-  const handlePrevHero = () =>
+  const handlePrevHero = () => {
+    stopAutoplay();
     setHeroIndex((prev) => (prev - 1 + REAL_PHOTOS.length) % REAL_PHOTOS.length);
-  const handleNextHero = () =>
-    setHeroIndex((prev) => (prev + 1) % REAL_PHOTOS.length);
+  };
 
-  const quickHighlights = [
-    {
-      key: 'rating',
-      label: t.home.quickHighlights.ratingLabel,
-      value: t.home.quickHighlights.ratingValue,
-      tabular: true,
-    },
-    {
-      key: 'location',
-      label: t.home.quickHighlights.locationLabel,
-      value: t.home.quickHighlights.locationValue,
-      tabular: false,
-    },
-    {
-      key: 'inscription',
-      label: t.home.quickHighlights.inscriptionLabel,
-      value: t.home.quickHighlights.inscriptionValue,
-      tabular: false,
-    },
-    {
-      key: 'bespoke',
-      label: t.home.quickHighlights.bespokeLabel,
-      value: t.home.quickHighlights.bespokeValue,
-      tabular: false,
-    },
-  ];
+  const handleNextHero = () => {
+    stopAutoplay();
+    setHeroIndex((prev) => (prev + 1) % REAL_PHOTOS.length);
+  };
+
+  const handleSelectHero = (idx: number) => {
+    stopAutoplay();
+    setHeroIndex(idx);
+  };
+
+  const handleCopyAddress = async () => {
+    try {
+      await navigator.clipboard.writeText(VERIFIED_INFO.addressEn);
+      setAddressCopied(true);
+      window.setTimeout(() => setAddressCopied(false), 2000);
+    } catch {
+      setAddressCopied(false);
+    }
+  };
 
   return (
     <div className="space-y-18 sm:space-y-24">
-      {/* 1. Enhanced Hero — Wider Cloud Cake Default Frame + Circular Preview Indicators */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 space-y-6">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-7 lg:gap-9 items-stretch">
-          {/* Wider Photography Frame (Cloud Cake Default + 5 Real Photos Switcher) */}
-          <div className="lg:col-span-8 order-1">
-            <div className="group relative h-full min-h-[370px] sm:min-h-[490px] lg:min-h-[560px] rounded-2xl overflow-hidden border border-[#0F2A44]/12 dark:border-[#C9A45C]/20 shadow-sm">
+      {/* 1. Unified Deep Navy Display Hero — Cloud Cake Default + Slow Autoplay */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-10">
+        <div
+          onMouseEnter={stopAutoplay}
+          onPointerDown={stopAutoplay}
+          onFocusCapture={stopAutoplay}
+          className="relative overflow-hidden rounded-2xl bg-[#0F2A44] text-[#FAF6EE] border-2 border-[#C9A45C]/45 shadow-md"
+        >
+          {/* Desktop Full-Bleed End-Anchored Photo with Dark Navy Text-Side Scrim */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 min-h-[540px] lg:min-h-[600px]">
+            {/* Photo Half (Top on Mobile, Background/End Half on Desktop) */}
+            <div className="relative order-1 lg:order-2 lg:col-span-6 min-h-[300px] sm:min-h-[380px] lg:min-h-full">
               <PhotoFrame
                 key={activeHeroPhoto.id}
                 src={activeHeroPhoto.url}
@@ -95,66 +138,63 @@ export function HomePage({ lang, onNavigate, onOpenPhoto }: HomePageProps) {
                     : activeHeroPhoto.titleEn
                 }
                 className="w-full h-full"
-                imgClassName="group-hover:scale-[1.02] transition-transform duration-500 motion-reduce:transition-none"
+                imgClassName="object-cover"
                 priority
+              />
+              {/* Directional Dark Gradient into Deep Navy Panel */}
+              <div
+                aria-hidden="true"
+                className={`pointer-events-none absolute inset-0 bg-gradient-to-t from-[#0F2A44] via-[#0F2A44]/20 to-transparent lg:bg-gradient-to-t lg:from-[#0F2A44]/55 lg:via-transparent lg:to-transparent`}
               />
               <div
                 aria-hidden="true"
-                className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#081523]/85 via-[#081523]/35 to-transparent"
+                className={`hidden lg:block pointer-events-none absolute inset-y-0 w-36 ${
+                  isRtl
+                    ? 'right-0 bg-gradient-to-l from-[#0F2A44] via-[#0F2A44]/75 to-transparent'
+                    : 'left-0 bg-gradient-to-r from-[#0F2A44] via-[#0F2A44]/75 to-transparent'
+                }`}
               />
 
-              {/* Top-end Zoom & Counter */}
+              {/* Zoom Button & Active Photo Label */}
               <div className="absolute top-4 inset-x-4 flex items-center justify-between gap-3">
-                <span className="px-3 py-1 rounded-full text-xs font-medium bg-[#0F2A44]/85 text-[#D8B66E] border border-[#C9A45C]/30 tabular-nums">
-                  {heroIndex + 1} / {REAL_PHOTOS.length}
+                <span className="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#081523]/85 text-[#FAF6EE] border border-[#FAF6EE]/25">
+                  {lang === 'ar'
+                    ? activeHeroPhoto.titleAr
+                    : activeHeroPhoto.titleEn}
                 </span>
                 <button
                   type="button"
-                  onClick={() => onOpenPhoto(heroIndex)}
+                  onClick={() => {
+                    stopAutoplay();
+                    onOpenPhoto(heroIndex);
+                  }}
                   aria-label={t.actions.zoomPhotoAria}
-                  className="w-10 h-10 rounded-full shrink-0 flex items-center justify-center bg-[#0F2A44]/90 text-[#D8B66E] border border-[#C9A45C]/40 hover:bg-[#17395B] transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D8B66E]"
+                  className="w-11 h-11 rounded-full shrink-0 flex items-center justify-center bg-[#081523]/85 text-[#FAF6EE] border-2 border-[#FAF6EE]/30 hover:bg-[#0F2A44] transition-colors cursor-pointer"
                 >
                   <Maximize2 className="w-4 h-4" aria-hidden="true" />
                 </button>
               </div>
 
-              {/* Bottom Caption + Circular Switcher Indicators */}
-              <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-                <div className="space-y-0.5 text-[#FAF6EE]">
-                  <p
-                    className={`text-lg sm:text-2xl font-semibold tracking-wide ${
-                      lang === 'ar' ? 'font-display-ar' : 'font-display-en'
-                    }`}
-                  >
-                    {lang === 'ar'
-                      ? activeHeroPhoto.titleAr
-                      : activeHeroPhoto.titleEn}
-                  </p>
-                  <p className="text-xs sm:text-sm text-[#EAE0CE]">
-                    {lang === 'ar'
-                      ? activeHeroPhoto.captionAr
-                      : activeHeroPhoto.captionEn}
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-2 self-start sm:self-auto">
+              {/* Larger Clear Switcher Dots & Arrows */}
+              <div className="absolute bottom-4 inset-x-4 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2.5">
                   <button
                     type="button"
                     onClick={handlePrevHero}
                     aria-label={t.actions.prevPhotoAria}
-                    className="w-9 h-9 rounded-full flex items-center justify-center bg-[#0F2A44]/85 text-[#FAF6EE] border border-[#C9A45C]/40 hover:bg-[#17395B] transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D8B66E]"
+                    className="w-11 h-11 rounded-full flex items-center justify-center bg-[#081523]/85 text-[#FAF6EE] border-2 border-[#FAF6EE]/35 hover:bg-[#0F2A44] transition-colors cursor-pointer"
                   >
                     {isRtl ? (
-                      <ChevronRight className="w-4 h-4" aria-hidden="true" />
+                      <ChevronRight className="w-5 h-5" aria-hidden="true" />
                     ) : (
-                      <ChevronLeft className="w-4 h-4" aria-hidden="true" />
+                      <ChevronLeft className="w-5 h-5" aria-hidden="true" />
                     )}
                   </button>
 
                   <div
                     role="tablist"
                     aria-label={t.actions.selectHeroPhotoAria}
-                    className="flex items-center gap-1.5 px-2.5 py-2 rounded-full bg-[#0F2A44]/80 border border-[#C9A45C]/30"
+                    className="flex items-center gap-2 px-3.5 py-2.5 rounded-full bg-[#081523]/85 border-2 border-[#FAF6EE]/25"
                   >
                     {REAL_PHOTOS.map((photo, idx) => {
                       const isActive = idx === heroIndex;
@@ -167,11 +207,11 @@ export function HomePage({ lang, onNavigate, onOpenPhoto }: HomePageProps) {
                           aria-label={`${t.actions.selectHeroPhotoAria}: ${
                             lang === 'ar' ? photo.titleAr : photo.titleEn
                           }`}
-                          onClick={() => setHeroIndex(idx)}
-                          className={`rounded-full transition-all duration-200 motion-reduce:transition-none cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D8B66E] ${
+                          onClick={() => handleSelectHero(idx)}
+                          className={`rounded-full transition-all duration-200 motion-reduce:transition-none cursor-pointer ${
                             isActive
-                              ? 'w-5 h-2.5 bg-[#D8B66E]'
-                              : 'w-2.5 h-2.5 bg-[#FAF6EE]/45 hover:bg-[#FAF6EE]/80'
+                              ? 'w-7 h-3 bg-[#D4AE5E]'
+                              : 'w-3 h-3 bg-[#FAF6EE]/50 hover:bg-[#FAF6EE]'
                           }`}
                         />
                       );
@@ -182,193 +222,239 @@ export function HomePage({ lang, onNavigate, onOpenPhoto }: HomePageProps) {
                     type="button"
                     onClick={handleNextHero}
                     aria-label={t.actions.nextPhotoAria}
-                    className="w-9 h-9 rounded-full flex items-center justify-center bg-[#0F2A44]/85 text-[#FAF6EE] border border-[#C9A45C]/40 hover:bg-[#17395B] transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D8B66E]"
+                    className="w-11 h-11 rounded-full flex items-center justify-center bg-[#081523]/85 text-[#FAF6EE] border-2 border-[#FAF6EE]/35 hover:bg-[#0F2A44] transition-colors cursor-pointer"
                   >
                     {isRtl ? (
-                      <ChevronLeft className="w-4 h-4" aria-hidden="true" />
+                      <ChevronLeft className="w-5 h-5" aria-hidden="true" />
                     ) : (
-                      <ChevronRight className="w-4 h-4" aria-hidden="true" />
+                      <ChevronRight className="w-5 h-5" aria-hidden="true" />
                     )}
                   </button>
                 </div>
+
+                <span className="text-xs font-semibold px-3 py-1.5 rounded-full bg-[#081523]/85 text-[#FAF6EE] tabular-nums">
+                  {heroIndex + 1} / {REAL_PHOTOS.length}
+                </span>
               </div>
             </div>
-          </div>
 
-          {/* Editorial Brand Anchor & Verified Actions */}
-          <div className="lg:col-span-4 order-2 flex flex-col justify-between rounded-2xl p-7 sm:p-8 bg-white dark:bg-[#0E2236] border border-[#0F2A44]/10 dark:border-[#C9A45C]/20">
-            <div className="space-y-6">
-              <div className="flex items-center gap-4">
-                <BrandBadge size="lg" />
-                <div className="space-y-1">
-                  <p className="text-xs font-medium text-[#9A742B] dark:text-[#D8B66E]">
-                    {lang === 'ar'
-                      ? 'المحمدية، الرياض'
-                      : 'Al Mohammadiyyah, Riyadh'}
-                  </p>
-                  <p className="text-sm font-medium text-[#0F2A44]/80 dark:text-[#F4EFE4]/80 tabular-nums">
-                    {t.home.ratingText}
-                  </p>
-                </div>
-              </div>
-
-              <div className="space-y-2.5">
-                <h1
-                  className={`heading-balance text-3xl sm:text-4xl font-bold leading-[1.2] text-[#0F2A44] dark:text-[#FAF6EE] ${
-                    lang === 'ar' ? 'font-display-ar' : 'font-display-en'
-                  }`}
-                >
-                  {VERIFIED_INFO.brandFull}
+            {/* Monumental Brand Text Half */}
+            <div className="relative z-10 order-2 lg:order-1 lg:col-span-6 p-7 sm:p-10 lg:p-12 flex flex-col justify-between gap-8">
+              <div className="space-y-5">
+                {/* Oversized Display Titles + Small Gold Tagline */}
+                <h1 className="heading-balance space-y-1">
+                  <span className="block font-display-en text-5xl sm:text-6xl lg:text-7xl xl:text-[5.1rem] font-bold tracking-tight leading-[0.98] text-[#D8B66E]">
+                    {VERIFIED_INFO.brandEn}
+                  </span>
+                  <span className="block font-display-ar text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.1] text-[#FAF6EE]">
+                    {VERIFIED_INFO.brandAr}
+                  </span>
                 </h1>
-                <p className="text-xl sm:text-2xl italic text-[#9A742B] dark:text-[#D8B66E] font-display-en">
+
+                <p className="text-base sm:text-lg italic tracking-wide text-[#D8B66E] font-display-en">
                   {VERIFIED_INFO.tagline}
                 </p>
-              </div>
 
-              <div className="pt-4 border-t border-[#0F2A44]/10 dark:border-[#C9A45C]/15">
-                <p className="text-base text-[#0F2A44]/85 dark:text-[#F4EFE4]/90 leading-relaxed">
-                  {t.home.inscriptionNote}
+                {/* Single Concise Line */}
+                <p className="text-base sm:text-lg text-[#F4EFE4] leading-relaxed max-w-md pt-1">
+                  {t.home.heroLine}
                 </p>
               </div>
-            </div>
 
-            <div className="pt-8 space-y-4">
-              <div className="flex flex-wrap items-center gap-2.5">
-                <a
-                  href={VERIFIED_LINKS.orderHub}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full text-sm font-medium bg-[#0F2A44] text-[#FAF6EE] hover:bg-[#17395B] dark:bg-[#C9A45C] dark:text-[#081523] dark:hover:bg-[#D8B66E] transition-colors whitespace-nowrap focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C9A45C]"
-                >
-                  <span>{t.actions.orderHub}</span>
-                  <ExternalLink className="w-4 h-4" aria-hidden="true" />
-                </a>
+              <div className="space-y-6">
+                {/* Rating & Address Badges Inside the Hero Panel */}
+                <div className="flex flex-wrap items-center gap-2.5">
+                  <a
+                    href={VERIFIED_LINKS.googleMapsSearch}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full text-xs sm:text-sm font-medium bg-[#0A1E31] text-[#FAF6EE] border-2 border-[#FAF6EE]/25 hover:border-[#D8B66E] transition-colors tabular-nums"
+                  >
+                    <Star
+                      className="w-4 h-4 fill-[#D8B66E] text-[#D8B66E] shrink-0"
+                      aria-hidden="true"
+                    />
+                    <span>{t.home.ratingText}</span>
+                  </a>
 
-                <a
-                  href={VERIFIED_LINKS.instagram}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full text-sm font-medium border border-[#0F2A44]/20 dark:border-[#C9A45C]/35 text-[#0F2A44] dark:text-[#FAF6EE] hover:border-[#C9A45C] hover:bg-[#0F2A44]/5 dark:hover:bg-white/5 transition-colors whitespace-nowrap focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C9A45C]"
-                >
-                  <Instagram
-                    className="w-4 h-4 text-[#9A742B] dark:text-[#D8B66E]"
-                    aria-hidden="true"
-                  />
-                  <span>{t.actions.instagramDm}</span>
-                </a>
+                  <a
+                    href={VERIFIED_LINKS.googleMapsSearch}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full text-xs sm:text-sm font-medium bg-[#0A1E31] text-[#FAF6EE] border-2 border-[#FAF6EE]/25 hover:border-[#D8B66E] transition-colors"
+                  >
+                    <MapPin className="w-4 h-4 shrink-0" aria-hidden="true" />
+                    <span>{t.home.heroAddressShort}</span>
+                  </a>
+                </div>
+
+                {/* ONLY Two Buttons: Order Hub (Primary Gold) & Instagram DM */}
+                <div className="flex flex-wrap items-center gap-3">
+                  <a
+                    href={VERIFIED_LINKS.orderHub}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full text-sm sm:text-base font-semibold bg-[#D4AE5E] text-[#081523] hover:bg-[#E0BE74] transition-colors whitespace-nowrap"
+                  >
+                    <span>{t.actions.orderHub}</span>
+                    <ExternalLink className="w-4 h-4" aria-hidden="true" />
+                  </a>
+
+                  <a
+                    href={VERIFIED_LINKS.instagram}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full text-sm sm:text-base font-medium border-2 border-[#FAF6EE]/40 text-[#FAF6EE] hover:bg-white/10 transition-colors whitespace-nowrap"
+                  >
+                    <Instagram className="w-4 h-4" aria-hidden="true" />
+                    <span>{t.actions.instagramDm}</span>
+                  </a>
+                </div>
               </div>
-
-              <p className="text-xs text-[#0F2A44]/65 dark:text-[#F4EFE4]/65">
-                {t.home.deliveryHeading}:{' '}
-                <span
-                  dir="ltr"
-                  className="font-medium text-[#0F2A44] dark:text-[#F4EFE4]"
-                >
-                  {VERIFIED_INFO.deliveryApps.join(' · ')}
-                </span>
-              </p>
             </div>
           </div>
-        </div>
-
-        {/* 2. Quick Highlights Strip — 4 Verified Fact Cards Below Hero */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {quickHighlights.map((card) => (
-            <div
-              key={card.key}
-              className="rounded-xl px-5 py-4 bg-white dark:bg-[#0E2236] border border-[#0F2A44]/10 dark:border-[#C9A45C]/15 space-y-1"
-            >
-              <p className="text-xs font-medium text-[#9A742B] dark:text-[#D8B66E]">
-                {card.label}
-              </p>
-              <p
-                className={`text-sm sm:text-base font-semibold text-[#0F2A44] dark:text-[#FAF6EE] ${
-                  card.tabular ? 'tabular-nums' : ''
-                }`}
-              >
-                {card.value}
-              </p>
-            </div>
-          ))}
         </div>
       </section>
 
-      {/* 3. Photos First — Curated Showcase of the Remaining Real Photographs */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-7">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-[#0F2A44]/10 dark:border-[#C9A45C]/15 pb-5">
-          <div className="space-y-1.5">
-            <h2
-              className={`heading-balance text-2xl sm:text-3xl font-bold text-[#0F2A44] dark:text-[#FAF6EE] ${
-                lang === 'ar' ? 'font-display-ar' : 'font-display-en'
-              }`}
-            >
-              {t.home.photosTitle}
-            </h2>
-            <p className="text-sm sm:text-base text-[#0F2A44]/75 dark:text-[#F4EFE4]/75">
-              {t.home.photosSubtitle}
-            </p>
-          </div>
+      {/* 2. Three Photo Service Zones (All 5 Existing Real Photos, Service Names Only) */}
+      <section
+        aria-label={t.home.productsTitle}
+        className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8"
+      >
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          {/* Zone 1: Cloud Cake -> Products */}
           <button
             type="button"
-            onClick={() => onNavigate('gallery')}
-            className="inline-flex items-center gap-2 text-sm font-medium text-[#0F2A44] dark:text-[#D8B66E] hover:opacity-80 transition-opacity cursor-pointer whitespace-nowrap self-start sm:self-auto"
+            onClick={() => onNavigate('products')}
+            className="group relative rounded-2xl overflow-hidden text-start bg-[#0F2A44] border border-[#0F2A44]/15 dark:border-[#F4EFE4]/15 aspect-[4/5] cursor-pointer"
           >
-            <span>{t.actions.viewGallery}</span>
-            <DirectionArrow className="w-4 h-4" aria-hidden="true" />
-          </button>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {showcasePhotos.map((photo, idx) => {
-            const globalIndex = idx + 1;
-            return (
-              <figure
-                key={photo.id}
-                className="group relative rounded-xl overflow-hidden bg-white dark:bg-[#0E2236] border border-[#0F2A44]/10 dark:border-[#C9A45C]/15 transition-transform duration-200 hover:-translate-y-0.5 motion-reduce:transition-none"
+            <PhotoFrame
+              src={REAL_PHOTOS[0].url}
+              alt={lang === 'ar' ? REAL_PHOTOS[0].altAr : REAL_PHOTOS[0].altEn}
+              fallbackTitle={t.home.serviceZones.cloudCake}
+              className="w-full h-full"
+              imgClassName="group-hover:scale-[1.03] transition-transform duration-500 motion-reduce:transition-none"
+            />
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#081523]/90 via-[#081523]/45 to-transparent"
+            />
+            <div className="absolute inset-x-0 bottom-0 p-5 flex items-center justify-between gap-3 text-[#FAF6EE]">
+              <span
+                className={`text-xl font-bold ${
+                  lang === 'ar' ? 'font-display-ar' : 'font-display-en'
+                }`}
               >
-                <button
-                  type="button"
-                  onClick={() => onOpenPhoto(globalIndex)}
-                  aria-label={`${t.actions.zoomPhotoAria}: ${
-                    lang === 'ar' ? photo.titleAr : photo.titleEn
-                  }`}
-                  className="block w-full text-start cursor-pointer focus-visible:outline-2 focus-visible:outline-inset focus-visible:outline-[#C9A45C]"
-                >
-                  <div className="aspect-[4/5] relative overflow-hidden">
-                    <PhotoFrame
-                      src={photo.url}
-                      alt={lang === 'ar' ? photo.altAr : photo.altEn}
-                      fallbackTitle={
-                        lang === 'ar' ? photo.titleAr : photo.titleEn
-                      }
-                      className="w-full h-full"
-                      imgClassName="group-hover:scale-[1.03] transition-transform duration-500 motion-reduce:transition-none"
-                    />
-                    <span
-                      aria-hidden="true"
-                      className="absolute top-3 end-3 w-9 h-9 rounded-full flex items-center justify-center bg-[#0F2A44]/85 text-[#D8B66E] border border-[#C9A45C]/30"
-                    >
-                      <Maximize2 className="w-3.5 h-3.5" />
-                    </span>
-                  </div>
-                  <figcaption className="p-4 space-y-1">
-                    <p className="text-sm font-semibold text-[#0F2A44] dark:text-[#FAF6EE]">
-                      {lang === 'ar' ? photo.titleAr : photo.titleEn}
-                    </p>
-                    <p className="text-xs text-[#0F2A44]/70 dark:text-[#F4EFE4]/70">
-                      {lang === 'ar' ? photo.captionAr : photo.captionEn}
-                    </p>
-                  </figcaption>
-                </button>
-              </figure>
-            );
-          })}
+                {t.home.serviceZones.cloudCake}
+              </span>
+              <span
+                aria-hidden="true"
+                className="w-9 h-9 rounded-full shrink-0 flex items-center justify-center bg-[#0F2A44]/90 border border-[#FAF6EE]/30"
+              >
+                <DirectionArrow className="w-4 h-4" />
+              </span>
+            </div>
+          </button>
+
+          {/* Zone 2: Cake Inscription (Chocolate Cake + Caramel Pour) -> Composer */}
+          <button
+            type="button"
+            onClick={() => onOpenComposer('inscription')}
+            className="group relative rounded-2xl overflow-hidden text-start bg-[#0F2A44] border border-[#0F2A44]/15 dark:border-[#F4EFE4]/15 aspect-[4/5] cursor-pointer"
+          >
+            <div className="grid grid-rows-2 w-full h-full gap-0.5 bg-[#0F2A44]">
+              <PhotoFrame
+                src={REAL_PHOTOS[1].url}
+                alt={
+                  lang === 'ar' ? REAL_PHOTOS[1].altAr : REAL_PHOTOS[1].altEn
+                }
+                fallbackTitle={t.home.serviceZones.inscription}
+                className="w-full h-full"
+                imgClassName="group-hover:scale-[1.03] transition-transform duration-500 motion-reduce:transition-none"
+              />
+              <PhotoFrame
+                src={REAL_PHOTOS[3].url}
+                alt={
+                  lang === 'ar' ? REAL_PHOTOS[3].altAr : REAL_PHOTOS[3].altEn
+                }
+                fallbackTitle={t.home.serviceZones.inscription}
+                className="w-full h-full"
+                imgClassName="group-hover:scale-[1.03] transition-transform duration-500 motion-reduce:transition-none"
+              />
+            </div>
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#081523]/90 via-[#081523]/45 to-transparent"
+            />
+            <div className="absolute inset-x-0 bottom-0 p-5 flex items-center justify-between gap-3 text-[#FAF6EE]">
+              <span
+                className={`text-xl font-bold ${
+                  lang === 'ar' ? 'font-display-ar' : 'font-display-en'
+                }`}
+              >
+                {t.home.serviceZones.inscription}
+              </span>
+              <span
+                aria-hidden="true"
+                className="w-9 h-9 rounded-full shrink-0 flex items-center justify-center bg-[#0F2A44]/90 border border-[#FAF6EE]/30"
+              >
+                <DirectionArrow className="w-4 h-4" />
+              </span>
+            </div>
+          </button>
+
+          {/* Zone 3: Catering & Occasions (Choux d'Amour + Dates Warmer) -> Composer */}
+          <button
+            type="button"
+            onClick={() => onOpenComposer('catering')}
+            className="group relative rounded-2xl overflow-hidden text-start bg-[#0F2A44] border border-[#0F2A44]/15 dark:border-[#F4EFE4]/15 aspect-[4/5] cursor-pointer"
+          >
+            <div className="grid grid-rows-2 w-full h-full gap-0.5 bg-[#0F2A44]">
+              <PhotoFrame
+                src={REAL_PHOTOS[2].url}
+                alt={
+                  lang === 'ar' ? REAL_PHOTOS[2].altAr : REAL_PHOTOS[2].altEn
+                }
+                fallbackTitle={t.home.serviceZones.catering}
+                className="w-full h-full"
+                imgClassName="group-hover:scale-[1.03] transition-transform duration-500 motion-reduce:transition-none"
+              />
+              <PhotoFrame
+                src={REAL_PHOTOS[4].url}
+                alt={
+                  lang === 'ar' ? REAL_PHOTOS[4].altAr : REAL_PHOTOS[4].altEn
+                }
+                fallbackTitle={t.home.serviceZones.catering}
+                className="w-full h-full"
+                imgClassName="group-hover:scale-[1.03] transition-transform duration-500 motion-reduce:transition-none"
+              />
+            </div>
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#081523]/90 via-[#081523]/45 to-transparent"
+            />
+            <div className="absolute inset-x-0 bottom-0 p-5 flex items-center justify-between gap-3 text-[#FAF6EE]">
+              <span
+                className={`text-xl font-bold ${
+                  lang === 'ar' ? 'font-display-ar' : 'font-display-en'
+                }`}
+              >
+                {t.home.serviceZones.catering}
+              </span>
+              <span
+                aria-hidden="true"
+                className="w-9 h-9 rounded-full shrink-0 flex items-center justify-center bg-[#0F2A44]/90 border border-[#FAF6EE]/30"
+              >
+                <DirectionArrow className="w-4 h-4" />
+              </span>
+            </div>
+          </button>
         </div>
       </section>
 
-      {/* 4. Products & Services — Clean Editorial Menu Index After Photography (Zero Prices) */}
+      {/* 3. Products & Services Editorial Index (Zero Prices) */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-[#0F2A44]/10 dark:border-[#C9A45C]/15 pb-5">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-[#0F2A44]/15 dark:border-[#F4EFE4]/15 pb-5">
           <div className="space-y-1.5">
             <h2
               className={`heading-balance text-2xl sm:text-3xl font-bold text-[#0F2A44] dark:text-[#FAF6EE] ${
@@ -377,14 +463,14 @@ export function HomePage({ lang, onNavigate, onOpenPhoto }: HomePageProps) {
             >
               {t.home.productsTitle}
             </h2>
-            <p className="text-sm sm:text-base text-[#0F2A44]/75 dark:text-[#F4EFE4]/75">
+            <p className="text-sm sm:text-base text-[#0F2A44]/75 dark:text-[#D5D0C6]">
               {t.home.productsSubtitle}
             </p>
           </div>
           <button
             type="button"
             onClick={() => onNavigate('products')}
-            className="inline-flex items-center gap-2 text-sm font-medium text-[#0F2A44] dark:text-[#D8B66E] hover:opacity-80 transition-opacity cursor-pointer whitespace-nowrap self-start sm:self-auto"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-[#0F2A44] dark:text-[#FAF6EE] hover:underline underline-offset-4 cursor-pointer whitespace-nowrap self-start sm:self-auto"
           >
             <span>{t.actions.viewProducts}</span>
             <DirectionArrow className="w-4 h-4" aria-hidden="true" />
@@ -393,12 +479,12 @@ export function HomePage({ lang, onNavigate, onOpenPhoto }: HomePageProps) {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
           {/* Signature Items Editorial List */}
-          <div className="lg:col-span-7 rounded-2xl p-6 sm:p-8 bg-white dark:bg-[#0E2236] border border-[#0F2A44]/10 dark:border-[#C9A45C]/15 flex flex-col justify-between">
+          <div className="lg:col-span-7 rounded-2xl p-6 sm:p-8 bg-white dark:bg-[#0E2236] border border-[#0F2A44]/15 dark:border-[#F4EFE4]/15 flex flex-col justify-between">
             <div className="space-y-5">
-              <p className="text-xs font-semibold text-[#9A742B] dark:text-[#D8B66E]">
+              <p className="text-xs font-semibold text-[#0F2A44]/65 dark:text-[#CBD5E1]">
                 {t.products.filterSignature}
               </p>
-              <ul className="divide-y divide-[#0F2A44]/10 dark:divide-[#C9A45C]/15">
+              <ul className="divide-y divide-[#0F2A44]/10 dark:divide-[#F4EFE4]/10">
                 {signatureProducts.map((item, idx) => (
                   <li
                     key={item.id}
@@ -409,12 +495,12 @@ export function HomePage({ lang, onNavigate, onOpenPhoto }: HomePageProps) {
                         {lang === 'ar' ? item.nameAr : item.nameEn}
                       </h3>
                       {(item.subtitleAr || item.subtitleEn) && (
-                        <p className="text-xs sm:text-sm text-[#0F2A44]/70 dark:text-[#F4EFE4]/70">
+                        <p className="text-xs sm:text-sm text-[#0F2A44]/75 dark:text-[#D5D0C6]">
                           {lang === 'ar' ? item.subtitleAr : item.subtitleEn}
                         </p>
                       )}
                     </div>
-                    <span className="text-xs text-[#9A742B] dark:text-[#D8B66E] tabular-nums shrink-0">
+                    <span className="text-xs font-medium text-[#0F2A44]/60 dark:text-[#CBD5E1] tabular-nums shrink-0">
                       0{idx + 1}
                     </span>
                   </li>
@@ -424,12 +510,12 @@ export function HomePage({ lang, onNavigate, onOpenPhoto }: HomePageProps) {
           </div>
 
           {/* Bespoke Cakes & Catering Editorial Panel */}
-          <div className="lg:col-span-5 rounded-2xl p-6 sm:p-8 bg-[#0F2A44] text-[#FAF6EE] border border-[#C9A45C]/30 flex flex-col justify-between gap-8">
+          <div className="lg:col-span-5 rounded-2xl p-6 sm:p-8 bg-[#0F2A44] text-[#FAF6EE] border-2 border-[#C9A45C]/40 flex flex-col justify-between gap-8">
             <div className="space-y-5">
-              <p className="text-xs font-semibold text-[#D8B66E]">
+              <p className="text-xs font-semibold text-[#E2DDD2]">
                 {t.home.bespokeHeading}
               </p>
-              <ul className="divide-y divide-[#C9A45C]/20">
+              <ul className="divide-y divide-[#FAF6EE]/15">
                 {bespokeProducts.map((service) => (
                   <li
                     key={service.id}
@@ -448,62 +534,44 @@ export function HomePage({ lang, onNavigate, onOpenPhoto }: HomePageProps) {
 
             <button
               type="button"
-              onClick={() => onNavigate('products')}
-              className="inline-flex items-center justify-between gap-2 px-5 py-3 rounded-full text-sm font-medium bg-[#C9A45C] text-[#081523] hover:bg-[#D8B66E] transition-colors cursor-pointer"
+              onClick={() => onOpenComposer('inscription')}
+              className="inline-flex items-center justify-between gap-2 px-5 py-3 rounded-full text-sm font-semibold bg-[#D4AE5E] text-[#081523] hover:bg-[#E0BE74] transition-colors cursor-pointer"
             >
-              <span>{t.actions.viewProducts}</span>
+              <span>{t.customComposer.title}</span>
               <DirectionArrow className="w-4 h-4" aria-hidden="true" />
             </button>
           </div>
         </div>
       </section>
 
-      {/* 5. How to Order — 4 Verified Real Paths Only */}
+      {/* 4. How to Order — Compact 4-Path Linked List */}
       <HowToOrderSection lang={lang} />
 
-      {/* 6. FAQ Accordion — Strictly 5 Verified Questions */}
+      {/* 5. FAQ Accordion — 4 Verified Questions */}
       <FaqAccordion lang={lang} />
 
-      {/* 7. Verified Riyadh Visit & Rating Strip + Google Maps Search Link */}
+      {/* 6. Simplified Visit Card: زورونا + Address + Directions & Copy Only */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="rounded-2xl p-7 sm:p-9 bg-[#F3ECE0] dark:bg-[#0E2236] border border-[#0F2A44]/10 dark:border-[#C9A45C]/20 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
-          <div className="space-y-3 max-w-2xl">
-            <div className="flex items-center gap-2 text-sm font-medium text-[#9A742B] dark:text-[#D8B66E]">
-              <MapPin className="w-4 h-4 shrink-0" aria-hidden="true" />
-              <span>{t.home.locationHeading}</span>
-            </div>
-            <p className="text-base sm:text-lg font-semibold text-[#0F2A44] dark:text-[#FAF6EE]">
+        <div className="rounded-2xl p-7 sm:p-9 bg-[#F3ECE0] dark:bg-[#0E2236] border border-[#0F2A44]/15 dark:border-[#F4EFE4]/15 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          <div className="space-y-2 max-w-2xl">
+            <h2
+              className={`text-2xl sm:text-3xl font-bold text-[#0F2A44] dark:text-[#FAF6EE] ${
+                lang === 'ar' ? 'font-display-ar' : 'font-display-en'
+              }`}
+            >
+              {t.home.visitHeading}
+            </h2>
+            <p className="text-base font-medium text-[#0F2A44] dark:text-[#FAF6EE]">
               {lang === 'ar' ? VERIFIED_INFO.addressAr : VERIFIED_INFO.addressEn}
             </p>
             {lang === 'ar' && (
               <p
                 dir="ltr"
-                className="text-xs sm:text-sm text-[#0F2A44]/75 dark:text-[#F4EFE4]/75 text-start"
+                className="text-xs sm:text-sm text-[#0F2A44]/75 dark:text-[#D5D0C6] text-start"
               >
                 {VERIFIED_INFO.addressEn}
               </p>
             )}
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-[#0F2A44]/80 dark:text-[#F4EFE4]/80 pt-1">
-              <span className="inline-flex items-center gap-1.5 font-medium tabular-nums">
-                <Star
-                  className="w-4 h-4 fill-[#C9A45C] text-[#C9A45C]"
-                  aria-hidden="true"
-                />
-                {t.home.ratingText}
-              </span>
-              <span
-                aria-hidden="true"
-                className="text-[#0F2A44]/30 dark:text-[#C9A45C]/40"
-              >
-                ·
-              </span>
-              <span>
-                {t.home.deliveryHeading}:{' '}
-                <span dir="ltr" className="font-medium">
-                  {VERIFIED_INFO.deliveryApps.join(' · ')}
-                </span>
-              </span>
-            </div>
           </div>
 
           <div className="flex flex-wrap items-center gap-3 shrink-0">
@@ -511,19 +579,29 @@ export function HomePage({ lang, onNavigate, onOpenPhoto }: HomePageProps) {
               href={VERIFIED_LINKS.googleMapsSearch}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full text-sm font-medium border border-[#0F2A44]/20 dark:border-[#C9A45C]/35 text-[#0F2A44] dark:text-[#FAF6EE] hover:border-[#C9A45C] hover:bg-[#0F2A44]/5 dark:hover:bg-white/5 transition-colors whitespace-nowrap"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-sm font-semibold bg-[#D4AE5E] text-[#081523] hover:bg-[#E0BE74] transition-colors whitespace-nowrap"
             >
-              <MapPin className="w-4 h-4 text-[#9A742B] dark:text-[#D8B66E]" aria-hidden="true" />
-              <span>{t.actions.openGoogleMaps}</span>
+              <MapPin className="w-4 h-4 shrink-0" aria-hidden="true" />
+              <span>{t.actions.directions}</span>
             </a>
 
             <button
               type="button"
-              onClick={() => onNavigate('contact')}
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-sm font-medium bg-[#0F2A44] text-[#FAF6EE] hover:bg-[#17395B] dark:bg-[#C9A45C] dark:text-[#081523] dark:hover:bg-[#D8B66E] transition-colors cursor-pointer whitespace-nowrap"
+              onClick={handleCopyAddress}
+              aria-live="polite"
+              className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full text-sm font-medium border-2 border-[#0F2A44]/25 dark:border-[#F4EFE4]/30 text-[#0F2A44] dark:text-[#FAF6EE] hover:border-[#0F2A44] dark:hover:border-[#FAF6EE] transition-colors cursor-pointer whitespace-nowrap"
             >
-              <span>{t.actions.visitUs}</span>
-              <DirectionArrow className="w-4 h-4" aria-hidden="true" />
+              {addressCopied ? (
+                <>
+                  <Check className="w-4 h-4 shrink-0" aria-hidden="true" />
+                  <span>{t.actions.addressCopied}</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="w-4 h-4 shrink-0" aria-hidden="true" />
+                  <span>{t.actions.copyAddress}</span>
+                </>
+              )}
             </button>
           </div>
         </div>

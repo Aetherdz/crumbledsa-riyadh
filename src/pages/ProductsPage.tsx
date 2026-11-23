@@ -4,6 +4,7 @@ import {
   COPY,
   PRODUCTS,
   REAL_PHOTOS,
+  type CustomServiceKey,
   type Language,
 } from '../data/crumbledData';
 import { BrandBadge } from '../components/BrandBadge';
@@ -12,12 +13,17 @@ import { CustomOrdersComposer } from '../components/CustomOrdersComposer';
 
 interface ProductsPageProps {
   lang: Language;
+  initialService?: CustomServiceKey;
   onOpenPhoto: (index: number) => void;
 }
 
 type CategoryFilter = 'all' | 'signature' | 'bespoke';
 
-export function ProductsPage({ lang, onOpenPhoto }: ProductsPageProps) {
+export function ProductsPage({
+  lang,
+  initialService = 'inscription',
+  onOpenPhoto,
+}: ProductsPageProps) {
   const [filter, setFilter] = useState<CategoryFilter>('all');
   const [query, setQuery] = useState('');
   const t = COPY[lang];
@@ -67,11 +73,8 @@ export function ProductsPage({ lang, onOpenPhoto }: ProductsPageProps) {
             >
               {t.products.title}
             </h1>
-            <p className="text-sm sm:text-base text-[#0F2A44]/75 dark:text-[#F4EFE4]/75 max-w-2xl leading-relaxed">
+            <p className="text-sm sm:text-base text-[#0F2A44]/75 dark:text-[#D5D0C6] max-w-2xl">
               {t.products.subtitle}
-            </p>
-            <p className="text-sm font-medium text-[#9A742B] dark:text-[#D8B66E]">
-              {t.products.inscriptionHighlight}
             </p>
           </div>
         </div>
@@ -81,7 +84,7 @@ export function ProductsPage({ lang, onOpenPhoto }: ProductsPageProps) {
           <div
             role="tablist"
             aria-label={t.products.title}
-            className="inline-flex items-center gap-1 p-1 rounded-full bg-[#EFE7D8] dark:bg-[#0E2236] border border-[#0F2A44]/10 dark:border-[#C9A45C]/20 self-start"
+            className="inline-flex items-center gap-1 p-1 rounded-full bg-[#EFE7D8] dark:bg-[#0E2236] border border-[#0F2A44]/15 dark:border-[#F4EFE4]/15 self-start"
           >
             {(
               [
@@ -100,8 +103,8 @@ export function ProductsPage({ lang, onOpenPhoto }: ProductsPageProps) {
                   onClick={() => setFilter(tab.key)}
                   className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap shrink-0 transition-colors cursor-pointer ${
                     active
-                      ? 'bg-[#0F2A44] text-[#FAF6EE] dark:bg-[#C9A45C] dark:text-[#081523]'
-                      : 'text-[#0F2A44]/75 dark:text-[#F4EFE4]/75 hover:text-[#0F2A44] dark:hover:text-[#FAF6EE]'
+                      ? 'bg-[#0F2A44] text-[#FAF6EE] dark:bg-[#FAF6EE] dark:text-[#081523]'
+                      : 'text-[#0F2A44]/80 dark:text-[#E2DDD2] hover:text-[#0F2A44] dark:hover:text-white'
                   }`}
                 >
                   {tab.label}
@@ -113,7 +116,7 @@ export function ProductsPage({ lang, onOpenPhoto }: ProductsPageProps) {
           <div className="flex items-center gap-3 w-full lg:w-auto lg:min-w-[340px]">
             <div className="relative flex-1">
               <Search
-                className="w-4 h-4 text-[#0F2A44]/50 dark:text-[#D8B66E]/70 absolute top-1/2 -translate-y-1/2 start-3.5 pointer-events-none"
+                className="w-4 h-4 text-[#0F2A44]/60 dark:text-[#CBD5E1] absolute top-1/2 -translate-y-1/2 start-3.5 pointer-events-none"
                 aria-hidden="true"
               />
               <input
@@ -122,20 +125,20 @@ export function ProductsPage({ lang, onOpenPhoto }: ProductsPageProps) {
                 onChange={(e) => setQuery(e.target.value)}
                 aria-label={t.products.searchLabel}
                 placeholder={t.products.searchPlaceholder}
-                className="w-full rounded-full ps-10 pe-10 py-2.5 text-sm bg-white dark:bg-[#0E2236] text-[#0F2A44] dark:text-[#FAF6EE] placeholder:text-[#0F2A44]/50 dark:placeholder:text-[#F4EFE4]/50 border border-[#0F2A44]/15 dark:border-[#C9A45C]/25 focus:border-[#C9A45C] focus:outline-none"
+                className="w-full rounded-full ps-10 pe-10 py-2.5 text-sm bg-white dark:bg-[#0E2236] text-[#0F2A44] dark:text-[#FAF6EE] placeholder:text-[#0F2A44]/55 dark:placeholder:text-[#CBD5E1]/70 border border-[#0F2A44]/20 dark:border-[#F4EFE4]/20 focus:border-[#0F2A44] dark:focus:border-[#FAF6EE]"
               />
               {query && (
                 <button
                   type="button"
                   onClick={() => setQuery('')}
                   aria-label={t.actions.clearSearch}
-                  className="w-7 h-7 rounded-full flex items-center justify-center absolute top-1/2 -translate-y-1/2 end-2 text-[#0F2A44]/65 dark:text-[#D8B66E] hover:bg-[#0F2A44]/10 dark:hover:bg-white/10 transition-colors cursor-pointer"
+                  className="w-7 h-7 rounded-full flex items-center justify-center absolute top-1/2 -translate-y-1/2 end-2 text-[#0F2A44]/75 dark:text-[#FAF6EE] hover:bg-[#0F2A44]/10 dark:hover:bg-white/10 transition-colors cursor-pointer"
                 >
                   <X className="w-3.5 h-3.5" aria-hidden="true" />
                 </button>
               )}
             </div>
-            <span className="text-xs font-medium text-[#9A742B] dark:text-[#D8B66E] whitespace-nowrap tabular-nums">
+            <span className="text-xs font-medium text-[#0F2A44]/75 dark:text-[#CBD5E1] whitespace-nowrap tabular-nums">
               {t.products.resultsCount(filteredProducts.length)}
             </span>
           </div>
@@ -161,7 +164,7 @@ export function ProductsPage({ lang, onOpenPhoto }: ProductsPageProps) {
         </div>
       )}
 
-      {/* Signature Cakes & Sweets (Real Photography, Zero Prices) */}
+      {/* Signature Cakes & Sweets — Unequal Bento Grid (Cloud Cake Spans 2 Columns on Desktop) */}
       {signatureItems.length > 0 && (
         <section className="space-y-6">
           <h2
@@ -174,10 +177,14 @@ export function ProductsPage({ lang, onOpenPhoto }: ProductsPageProps) {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {signatureItems.map((item) => {
               const photoIdx = getPhotoIndex(item.photoUrl);
+              const isCloudFeatured =
+                item.id === 'cloud-cake' && signatureItems.length > 1;
               return (
                 <article
                   key={item.id}
-                  className="group rounded-xl overflow-hidden bg-white dark:bg-[#0E2236] border border-[#0F2A44]/10 dark:border-[#C9A45C]/15 flex flex-col transition-transform duration-200 hover:-translate-y-0.5 motion-reduce:transition-none"
+                  className={`group rounded-xl overflow-hidden bg-white dark:bg-[#0E2236] border border-[#0F2A44]/15 dark:border-[#F4EFE4]/15 flex flex-col transition-transform duration-200 hover:-translate-y-0.5 motion-reduce:transition-none ${
+                    isCloudFeatured ? 'sm:col-span-2 lg:col-span-2' : ''
+                  }`}
                 >
                   {item.photoUrl && (
                     <button
@@ -186,7 +193,11 @@ export function ProductsPage({ lang, onOpenPhoto }: ProductsPageProps) {
                       aria-label={`${t.actions.zoomPhotoAria}: ${
                         lang === 'ar' ? item.nameAr : item.nameEn
                       }`}
-                      className="relative aspect-[4/3] w-full overflow-hidden cursor-pointer focus-visible:outline-2 focus-visible:outline-inset focus-visible:outline-[#C9A45C]"
+                      className={`relative w-full overflow-hidden cursor-pointer ${
+                        isCloudFeatured
+                          ? 'aspect-[4/3] sm:aspect-[16/9] lg:aspect-[16/9]'
+                          : 'aspect-[4/3]'
+                      }`}
                     >
                       <PhotoFrame
                         src={item.photoUrl}
@@ -201,18 +212,22 @@ export function ProductsPage({ lang, onOpenPhoto }: ProductsPageProps) {
                       />
                       <span
                         aria-hidden="true"
-                        className="absolute top-3 end-3 w-9 h-9 rounded-full flex items-center justify-center bg-[#0F2A44]/85 text-[#D8B66E] border border-[#C9A45C]/30"
+                        className="absolute top-3 end-3 w-9 h-9 rounded-full flex items-center justify-center bg-[#0F2A44]/85 text-[#FAF6EE] border border-[#FAF6EE]/30"
                       >
                         <Maximize2 className="w-3.5 h-3.5" />
                       </span>
                     </button>
                   )}
                   <div className="p-5 space-y-2 flex-1">
-                    <h3 className="text-lg font-semibold text-[#0F2A44] dark:text-[#FAF6EE]">
+                    <h3
+                      className={`font-semibold text-[#0F2A44] dark:text-[#FAF6EE] ${
+                        isCloudFeatured ? 'text-xl sm:text-2xl' : 'text-lg'
+                      }`}
+                    >
                       {lang === 'ar' ? item.nameAr : item.nameEn}
                     </h3>
                     {(item.subtitleAr || item.subtitleEn) && (
-                      <p className="text-sm text-[#0F2A44]/75 dark:text-[#F4EFE4]/75 leading-relaxed">
+                      <p className="text-sm text-[#0F2A44]/75 dark:text-[#D5D0C6] leading-relaxed">
                         {lang === 'ar' ? item.subtitleAr : item.subtitleEn}
                       </p>
                     )}
@@ -238,16 +253,16 @@ export function ProductsPage({ lang, onOpenPhoto }: ProductsPageProps) {
             {bespokeItems.map((service, idx) => (
               <article
                 key={service.id}
-                className="rounded-xl p-6 bg-white dark:bg-[#0E2236] border border-[#0F2A44]/10 dark:border-[#C9A45C]/20 flex flex-col justify-between gap-4"
+                className="rounded-xl p-6 bg-white dark:bg-[#0E2236] border border-[#0F2A44]/15 dark:border-[#F4EFE4]/15 flex flex-col justify-between gap-4"
               >
                 <div className="space-y-2.5">
-                  <span className="text-xs font-medium text-[#9A742B] dark:text-[#D8B66E] tabular-nums">
+                  <span className="text-xs font-semibold text-[#0F2A44]/60 dark:text-[#CBD5E1] tabular-nums">
                     0{idx + 1}
                   </span>
                   <h3 className="text-lg font-semibold text-[#0F2A44] dark:text-[#FAF6EE]">
                     {lang === 'ar' ? service.nameAr : service.nameEn}
                   </h3>
-                  <p className="text-sm text-[#0F2A44]/75 dark:text-[#F4EFE4]/75 leading-relaxed">
+                  <p className="text-sm text-[#0F2A44]/75 dark:text-[#D5D0C6] leading-relaxed">
                     {lang === 'ar' ? service.subtitleAr : service.subtitleEn}
                   </p>
                 </div>
@@ -258,7 +273,11 @@ export function ProductsPage({ lang, onOpenPhoto }: ProductsPageProps) {
       )}
 
       {/* Custom Orders & Catering Message Composer */}
-      <CustomOrdersComposer lang={lang} showDeliveryNote />
+      <CustomOrdersComposer
+        lang={lang}
+        initialService={initialService}
+        showDeliveryNote
+      />
     </div>
   );
 }
