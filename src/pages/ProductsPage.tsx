@@ -1,9 +1,10 @@
 import { useMemo, useState } from 'react';
-import { Maximize2, Search, X } from 'lucide-react';
+import { Instagram, Maximize2, Search, X } from 'lucide-react';
 import {
   COPY,
   PRODUCTS,
   REAL_PHOTOS,
+  VERIFIED_LINKS,
   type CustomServiceKey,
   type Language,
 } from '../data/crumbledData';
@@ -34,12 +35,7 @@ export function ProductsPage({
     return PRODUCTS.filter((item) => {
       if (filter !== 'all' && item.category !== filter) return false;
       if (!normalizedQuery) return true;
-      const haystack = [
-        item.nameAr,
-        item.nameEn,
-        item.subtitleAr ?? '',
-        item.subtitleEn ?? '',
-      ]
+      const haystack = [item.nameAr, item.nameEn, item.tagAr, item.tagEn]
         .join(' ')
         .toLowerCase();
       return haystack.includes(normalizedQuery);
@@ -60,9 +56,9 @@ export function ProductsPage({
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-14 space-y-12">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-14 space-y-10">
       {/* Page Header with Brand Emblem */}
-      <header className="space-y-6 pb-8 border-b border-[#0F2A44]/10 dark:border-[#C9A45C]/15">
+      <header className="space-y-6 pb-8 border-b border-[#0F2A44]/15 dark:border-[#C9A45C]/25">
         <div className="flex items-start gap-4 sm:gap-5">
           <BrandBadge size="md" className="mt-0.5" />
           <div className="space-y-2">
@@ -73,18 +69,23 @@ export function ProductsPage({
             >
               {t.products.title}
             </h1>
-            <p className="text-sm sm:text-base text-[#0F2A44]/75 dark:text-[#D5D0C6] max-w-2xl">
+            <p className="text-base sm:text-[17px] text-[#263F59] dark:text-[#E6DFD2] max-w-2xl">
               {t.products.subtitle}
             </p>
           </div>
         </div>
+
+        {/* Single Clear Pricing & Order Details Confirmation Line */}
+        <p className="text-base sm:text-[17px] font-medium text-[#0F2A44] dark:text-[#FAF6EE] leading-relaxed rounded-xl px-5 py-3.5 bg-[#EFE7D8] dark:bg-[#0E2236] border border-[#0F2A44]/15 dark:border-[#C9A45C]/30">
+          {t.home.pricingNotice}
+        </p>
 
         {/* Interactive Category Tabs + Instant Bilingual Search */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div
             role="tablist"
             aria-label={t.products.title}
-            className="inline-flex items-center gap-1 p-1 rounded-full bg-[#EFE7D8] dark:bg-[#0E2236] border border-[#0F2A44]/15 dark:border-[#F4EFE4]/15 self-start"
+            className="inline-flex flex-wrap items-center gap-1.5 p-1.5 rounded-full bg-[#EFE7D8] dark:bg-[#0E2236] border border-[#0F2A44]/20 dark:border-[#F4EFE4]/20 self-start"
           >
             {(
               [
@@ -101,10 +102,10 @@ export function ProductsPage({
                   role="tab"
                   aria-selected={active}
                   onClick={() => setFilter(tab.key)}
-                  className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap shrink-0 transition-colors cursor-pointer ${
+                  className={`min-h-[44px] px-4 py-2 rounded-full text-sm sm:text-base font-semibold whitespace-nowrap shrink-0 transition-colors cursor-pointer ${
                     active
-                      ? 'bg-[#0F2A44] text-[#FAF6EE] dark:bg-[#FAF6EE] dark:text-[#081523]'
-                      : 'text-[#0F2A44]/80 dark:text-[#E2DDD2] hover:text-[#0F2A44] dark:hover:text-white'
+                      ? 'bg-[#0F2A44] text-[#FAF6EE] dark:bg-[#D8B464] dark:text-[#081523]'
+                      : 'text-[#0F2A44] dark:text-[#FAF6EE] hover:bg-[#0F2A44]/10 dark:hover:bg-white/10'
                   }`}
                 >
                   {tab.label}
@@ -113,10 +114,10 @@ export function ProductsPage({
             })}
           </div>
 
-          <div className="flex items-center gap-3 w-full lg:w-auto lg:min-w-[340px]">
+          <div className="flex items-center gap-3 w-full lg:w-auto lg:min-w-[360px]">
             <div className="relative flex-1">
               <Search
-                className="w-4 h-4 text-[#0F2A44]/60 dark:text-[#CBD5E1] absolute top-1/2 -translate-y-1/2 start-3.5 pointer-events-none"
+                className="w-5 h-5 text-[#263F59] dark:text-[#E6DFD2] absolute top-1/2 -translate-y-1/2 start-3.5 pointer-events-none"
                 aria-hidden="true"
               />
               <input
@@ -125,20 +126,21 @@ export function ProductsPage({
                 onChange={(e) => setQuery(e.target.value)}
                 aria-label={t.products.searchLabel}
                 placeholder={t.products.searchPlaceholder}
-                className="w-full rounded-full ps-10 pe-10 py-2.5 text-sm bg-white dark:bg-[#0E2236] text-[#0F2A44] dark:text-[#FAF6EE] placeholder:text-[#0F2A44]/55 dark:placeholder:text-[#CBD5E1]/70 border border-[#0F2A44]/20 dark:border-[#F4EFE4]/20 focus:border-[#0F2A44] dark:focus:border-[#FAF6EE]"
+                className="w-full min-h-[46px] rounded-full ps-11 pe-11 py-2.5 text-base bg-white dark:bg-[#0E2236] text-[#0F2A44] dark:text-[#FAF6EE] placeholder:text-[#263F59]/80 dark:placeholder:text-[#E6DFD2]/80 border-2 border-[#0F2A44]/25 dark:border-[#F4EFE4]/25 focus:border-[#0F2A44] dark:focus:border-[#D8B464]"
               />
               {query && (
                 <button
                   type="button"
                   onClick={() => setQuery('')}
                   aria-label={t.actions.clearSearch}
-                  className="w-7 h-7 rounded-full flex items-center justify-center absolute top-1/2 -translate-y-1/2 end-2 text-[#0F2A44]/75 dark:text-[#FAF6EE] hover:bg-[#0F2A44]/10 dark:hover:bg-white/10 transition-colors cursor-pointer"
+                  title={t.actions.clearSearch}
+                  className="w-9 h-9 rounded-full flex items-center justify-center absolute top-1/2 -translate-y-1/2 end-1.5 text-[#0F2A44] dark:text-[#FAF6EE] hover:bg-[#0F2A44]/10 dark:hover:bg-white/10 transition-colors cursor-pointer"
                 >
-                  <X className="w-3.5 h-3.5" aria-hidden="true" />
+                  <X className="w-4 h-4" aria-hidden="true" />
                 </button>
               )}
             </div>
-            <span className="text-xs font-medium text-[#0F2A44]/75 dark:text-[#CBD5E1] whitespace-nowrap tabular-nums">
+            <span className="text-sm font-semibold text-[#263F59] dark:text-[#E6DFD2] whitespace-nowrap tabular-nums">
               {t.products.resultsCount(filteredProducts.length)}
             </span>
           </div>
@@ -147,28 +149,28 @@ export function ProductsPage({
 
       {/* Empty Search Result State */}
       {filteredProducts.length === 0 && (
-        <div className="rounded-2xl p-10 text-center bg-white dark:bg-[#0E2236] border border-[#0F2A44]/10 dark:border-[#C9A45C]/20 space-y-4">
-          <p className="text-lg font-semibold text-[#0F2A44] dark:text-[#FAF6EE]">
+        <div className="rounded-2xl p-10 text-center bg-white dark:bg-[#0E2236] border border-[#0F2A44]/20 dark:border-[#C9A45C]/30 space-y-4">
+          <p className="text-lg font-bold text-[#0F2A44] dark:text-[#FAF6EE]">
             {t.products.noResultsTitle}
           </p>
-          <p className="text-sm text-[#0F2A44]/75 dark:text-[#F4EFE4]/75">
+          <p className="text-base text-[#263F59] dark:text-[#E6DFD2]">
             {t.products.noResultsDesc}
           </p>
           <button
             type="button"
             onClick={handleReset}
-            className="inline-flex items-center justify-center px-5 py-2.5 rounded-full text-sm font-medium bg-[#0F2A44] text-[#FAF6EE] hover:bg-[#17395B] dark:bg-[#C9A45C] dark:text-[#081523] dark:hover:bg-[#D8B66E] transition-colors cursor-pointer"
+            className="min-h-[44px] inline-flex items-center justify-center px-6 py-2.5 rounded-full text-base font-semibold bg-[#0F2A44] text-[#FAF6EE] hover:bg-[#17395B] dark:bg-[#D8B464] dark:text-[#081523] dark:hover:bg-[#E5C57B] transition-colors cursor-pointer"
           >
             {t.actions.resetFilters}
           </button>
         </div>
       )}
 
-      {/* Signature Cakes & Sweets — Unequal Bento Grid (Cloud Cake Spans 2 Columns on Desktop) */}
+      {/* Signature Cakes & Sweets — Unified 4:3 Food-Focused Cards (Name + Functional Tag + Order CTA Only) */}
       {signatureItems.length > 0 && (
         <section className="space-y-6">
           <h2
-            className={`text-xl sm:text-2xl font-bold text-[#0F2A44] dark:text-[#FAF6EE] ${
+            className={`text-2xl sm:text-3xl font-bold text-[#0F2A44] dark:text-[#FAF6EE] ${
               lang === 'ar' ? 'font-display-ar' : 'font-display-en'
             }`}
           >
@@ -177,60 +179,56 @@ export function ProductsPage({
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {signatureItems.map((item) => {
               const photoIdx = getPhotoIndex(item.photoUrl);
-              const isCloudFeatured =
-                item.id === 'cloud-cake' && signatureItems.length > 1;
+              const itemName = lang === 'ar' ? item.nameAr : item.nameEn;
+              const itemTag = lang === 'ar' ? item.tagAr : item.tagEn;
               return (
                 <article
                   key={item.id}
-                  className={`group rounded-xl overflow-hidden bg-white dark:bg-[#0E2236] border border-[#0F2A44]/15 dark:border-[#F4EFE4]/15 flex flex-col transition-transform duration-200 hover:-translate-y-0.5 motion-reduce:transition-none ${
-                    isCloudFeatured ? 'sm:col-span-2 lg:col-span-2' : ''
-                  }`}
+                  className="group rounded-2xl overflow-hidden bg-white dark:bg-[#0E2236] border border-[#0F2A44]/20 dark:border-[#F4EFE4]/20 flex flex-col"
                 >
                   {item.photoUrl && (
                     <button
                       type="button"
                       onClick={() => photoIdx >= 0 && onOpenPhoto(photoIdx)}
-                      aria-label={`${t.actions.zoomPhotoAria}: ${
-                        lang === 'ar' ? item.nameAr : item.nameEn
-                      }`}
-                      className={`relative w-full overflow-hidden cursor-pointer ${
-                        isCloudFeatured
-                          ? 'aspect-[4/3] sm:aspect-[16/9] lg:aspect-[16/9]'
-                          : 'aspect-[4/3]'
-                      }`}
+                      aria-label={`${t.actions.zoomPhotoAria}: ${itemName}`}
+                      className="relative w-full aspect-[4/3] overflow-hidden bg-[#EDE5D5] dark:bg-[#0B1C2E] cursor-pointer"
                     >
                       <PhotoFrame
                         src={item.photoUrl}
-                        alt={
-                          lang === 'ar'
-                            ? item.photoAltAr ?? item.nameAr
-                            : item.photoAltEn ?? item.nameEn
-                        }
-                        fallbackTitle={lang === 'ar' ? item.nameAr : item.nameEn}
+                        alt={itemName}
+                        fallbackTitle={itemName}
+                        fit="cover"
+                        objectPosition="object-center"
                         className="w-full h-full"
-                        imgClassName="group-hover:scale-[1.03] transition-transform duration-500 motion-reduce:transition-none"
+                        imgClassName="group-hover:scale-[1.02] transition-transform duration-500 motion-reduce:transition-none"
                       />
                       <span
                         aria-hidden="true"
-                        className="absolute top-3 end-3 w-9 h-9 rounded-full flex items-center justify-center bg-[#0F2A44]/85 text-[#FAF6EE] border border-[#FAF6EE]/30"
+                        className="absolute top-3 end-3 w-10 h-10 rounded-full flex items-center justify-center bg-[#0F2A44]/90 text-[#FAF6EE] border border-[#FAF6EE]/35"
                       >
-                        <Maximize2 className="w-3.5 h-3.5" />
+                        <Maximize2 className="w-4 h-4" />
                       </span>
                     </button>
                   )}
-                  <div className="p-5 space-y-2 flex-1">
-                    <h3
-                      className={`font-semibold text-[#0F2A44] dark:text-[#FAF6EE] ${
-                        isCloudFeatured ? 'text-xl sm:text-2xl' : 'text-lg'
-                      }`}
+                  <div className="p-5 sm:p-6 flex flex-col justify-between gap-4 flex-1">
+                    <div className="space-y-2">
+                      <span className="inline-block px-3 py-1 rounded-full text-sm font-semibold bg-[#EFE7D8] text-[#0F2A44] dark:bg-[#173654] dark:text-[#F4EFE4]">
+                        {itemTag}
+                      </span>
+                      <h3 className="text-xl font-bold text-[#0F2A44] dark:text-[#FAF6EE]">
+                        {itemName}
+                      </h3>
+                    </div>
+
+                    <a
+                      href={VERIFIED_LINKS.instagram}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full min-h-[46px] inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full text-base font-bold bg-[#D8B464] text-[#081523] hover:bg-[#E5C57B] transition-colors whitespace-nowrap"
                     >
-                      {lang === 'ar' ? item.nameAr : item.nameEn}
-                    </h3>
-                    {(item.subtitleAr || item.subtitleEn) && (
-                      <p className="text-sm text-[#0F2A44]/75 dark:text-[#D5D0C6] leading-relaxed">
-                        {lang === 'ar' ? item.subtitleAr : item.subtitleEn}
-                      </p>
-                    )}
+                      <Instagram className="w-4 h-4 shrink-0" aria-hidden="true" />
+                      <span>{t.actions.orderViaInstagram}</span>
+                    </a>
                   </div>
                 </article>
               );
@@ -243,31 +241,43 @@ export function ProductsPage({
       {bespokeItems.length > 0 && (
         <section className="space-y-6">
           <h2
-            className={`text-xl sm:text-2xl font-bold text-[#0F2A44] dark:text-[#FAF6EE] ${
+            className={`text-2xl sm:text-3xl font-bold text-[#0F2A44] dark:text-[#FAF6EE] ${
               lang === 'ar' ? 'font-display-ar' : 'font-display-en'
             }`}
           >
             {t.products.filterBespoke}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {bespokeItems.map((service, idx) => (
-              <article
-                key={service.id}
-                className="rounded-xl p-6 bg-white dark:bg-[#0E2236] border border-[#0F2A44]/15 dark:border-[#F4EFE4]/15 flex flex-col justify-between gap-4"
-              >
-                <div className="space-y-2.5">
-                  <span className="text-xs font-semibold text-[#0F2A44]/60 dark:text-[#CBD5E1] tabular-nums">
-                    0{idx + 1}
-                  </span>
-                  <h3 className="text-lg font-semibold text-[#0F2A44] dark:text-[#FAF6EE]">
-                    {lang === 'ar' ? service.nameAr : service.nameEn}
-                  </h3>
-                  <p className="text-sm text-[#0F2A44]/75 dark:text-[#D5D0C6] leading-relaxed">
-                    {lang === 'ar' ? service.subtitleAr : service.subtitleEn}
-                  </p>
-                </div>
-              </article>
-            ))}
+            {bespokeItems.map((service) => {
+              const serviceName =
+                lang === 'ar' ? service.nameAr : service.nameEn;
+              const serviceTag = lang === 'ar' ? service.tagAr : service.tagEn;
+              return (
+                <article
+                  key={service.id}
+                  className="rounded-2xl p-6 bg-white dark:bg-[#0E2236] border border-[#0F2A44]/20 dark:border-[#F4EFE4]/20 flex flex-col justify-between gap-5"
+                >
+                  <div className="space-y-2.5">
+                    <span className="inline-block px-3 py-1 rounded-full text-sm font-semibold bg-[#EFE7D8] text-[#0F2A44] dark:bg-[#173654] dark:text-[#F4EFE4]">
+                      {serviceTag}
+                    </span>
+                    <h3 className="text-xl font-bold text-[#0F2A44] dark:text-[#FAF6EE]">
+                      {serviceName}
+                    </h3>
+                  </div>
+
+                  <a
+                    href={VERIFIED_LINKS.instagram}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full min-h-[46px] inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full text-base font-bold bg-[#D8B464] text-[#081523] hover:bg-[#E5C57B] transition-colors whitespace-nowrap"
+                  >
+                    <Instagram className="w-4 h-4 shrink-0" aria-hidden="true" />
+                    <span>{t.actions.orderViaInstagram}</span>
+                  </a>
+                </article>
+              );
+            })}
           </div>
         </section>
       )}

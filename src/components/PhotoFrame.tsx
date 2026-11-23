@@ -7,6 +7,8 @@ interface PhotoFrameProps {
   fallbackTitle: string;
   className?: string;
   imgClassName?: string;
+  fit?: 'cover' | 'contain';
+  objectPosition?: string;
   priority?: boolean;
 }
 
@@ -16,14 +18,18 @@ export function PhotoFrame({
   fallbackTitle,
   className = '',
   imgClassName = '',
+  fit = 'cover',
+  objectPosition = 'object-center',
   priority = false,
 }: PhotoFrameProps) {
   const [hasError, setHasError] = useState(false);
   const [loaded, setLoaded] = useState(false);
 
+  const fitClass = fit === 'contain' ? 'object-contain' : 'object-cover';
+
   return (
     <div
-      className={`relative overflow-hidden bg-[#EDE5D5] dark:bg-[#102438] ${className}`}
+      className={`relative overflow-hidden bg-[#EDE5D5] dark:bg-[#0B1C2E] ${className}`}
     >
       {!hasError ? (
         <>
@@ -40,7 +46,7 @@ export function PhotoFrame({
             loading={priority ? 'eager' : 'lazy'}
             onLoad={() => setLoaded(true)}
             onError={() => setHasError(true)}
-            className={`w-full h-full object-cover transition-all duration-500 ${
+            className={`w-full h-full ${fitClass} ${objectPosition} transition-all duration-500 ${
               loaded ? 'opacity-100' : 'opacity-0'
             } ${imgClassName}`}
           />

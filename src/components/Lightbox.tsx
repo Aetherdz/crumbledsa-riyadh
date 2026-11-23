@@ -1,6 +1,11 @@
 import { useEffect } from 'react';
-import { ChevronLeft, ChevronRight, X } from 'lucide-react';
-import { COPY, type Language, type RealPhoto } from '../data/crumbledData';
+import { ChevronLeft, ChevronRight, ExternalLink, X } from 'lucide-react';
+import {
+  COPY,
+  getInstagramPostUrl,
+  type Language,
+  type RealPhoto,
+} from '../data/crumbledData';
 import { PhotoFrame } from './PhotoFrame';
 
 interface LightboxProps {
@@ -43,6 +48,8 @@ export function Lightbox({
   if (activeIndex === null) return null;
 
   const photo = photos[activeIndex];
+  const photoName = lang === 'ar' ? photo.titleAr : photo.titleEn;
+  const originalPostUrl = getInstagramPostUrl(photo.url);
   const goPrev = () =>
     onSelectIndex((activeIndex - 1 + photos.length) % photos.length);
   const goNext = () => onSelectIndex((activeIndex + 1) % photos.length);
@@ -51,8 +58,8 @@ export function Lightbox({
     <div
       role="dialog"
       aria-modal="true"
-      aria-label={lang === 'ar' ? photo.titleAr : photo.titleEn}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-[#06101B]/90 backdrop-blur-sm p-4 sm:p-8"
+      aria-label={photoName}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[#06101B]/92 backdrop-blur-sm p-4 sm:p-8"
       onClick={onClose}
     >
       <div
@@ -60,16 +67,17 @@ export function Lightbox({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="w-full flex items-center justify-between gap-4">
-          <div className="text-sm text-[#D8B66E] tabular-nums">
+          <div className="text-sm font-semibold text-[#E8CA82] tabular-nums">
             {activeIndex + 1} / {photos.length}
           </div>
           <button
             type="button"
             onClick={onClose}
             aria-label={t.actions.closeLightboxAria}
-            className="w-10 h-10 rounded-full flex items-center justify-center bg-[#0F2A44] text-[#F4EFE4] border border-[#C9A45C]/40 hover:bg-[#17395B] transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D8B66E]"
+            title={t.actions.closeLightboxAria}
+            className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full flex items-center justify-center bg-[#0F2A44] text-[#FAF6EE] border-2 border-[#D4AE5E]/60 hover:bg-[#17395B] transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D8B66E]"
           >
-            <X className="w-4 h-4" />
+            <X className="w-5 h-5" />
           </button>
         </div>
 
@@ -78,7 +86,8 @@ export function Lightbox({
             type="button"
             onClick={goPrev}
             aria-label={t.actions.prevPhotoAria}
-            className="w-10 h-10 sm:w-11 sm:h-11 rounded-full shrink-0 flex items-center justify-center bg-[#0F2A44]/90 text-[#F4EFE4] border border-[#C9A45C]/40 hover:bg-[#17395B] transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D8B66E]"
+            title={t.actions.prevPhotoAria}
+            className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full shrink-0 flex items-center justify-center bg-[#0F2A44] text-[#FAF6EE] border-2 border-[#D4AE5E]/60 hover:bg-[#17395B] transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D8B66E]"
           >
             {isRtl ? (
               <ChevronRight className="w-5 h-5" />
@@ -87,13 +96,13 @@ export function Lightbox({
             )}
           </button>
 
-          <div className="w-full max-h-[72vh] aspect-[4/3] sm:aspect-[16/11] rounded-xl overflow-hidden border border-[#C9A45C]/30 bg-[#0F2A44]">
+          <div className="w-full max-h-[70vh] aspect-[4/3] sm:aspect-[16/11] rounded-xl overflow-hidden border border-[#C9A45C]/45 bg-[#0A1B2C] p-2 sm:p-3">
             <PhotoFrame
               src={photo.url}
-              alt={lang === 'ar' ? photo.altAr : photo.altEn}
-              fallbackTitle={lang === 'ar' ? photo.titleAr : photo.titleEn}
-              className="w-full h-full"
-              imgClassName="object-contain bg-[#0A1B2C]"
+              alt={photoName}
+              fallbackTitle={photoName}
+              fit="contain"
+              className="w-full h-full bg-[#0A1B2C] dark:bg-[#0A1B2C]"
               priority
             />
           </div>
@@ -102,7 +111,8 @@ export function Lightbox({
             type="button"
             onClick={goNext}
             aria-label={t.actions.nextPhotoAria}
-            className="w-10 h-10 sm:w-11 sm:h-11 rounded-full shrink-0 flex items-center justify-center bg-[#0F2A44]/90 text-[#F4EFE4] border border-[#C9A45C]/40 hover:bg-[#17395B] transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D8B66E]"
+            title={t.actions.nextPhotoAria}
+            className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full shrink-0 flex items-center justify-center bg-[#0F2A44] text-[#FAF6EE] border-2 border-[#D4AE5E]/60 hover:bg-[#17395B] transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D8B66E]"
           >
             {isRtl ? (
               <ChevronLeft className="w-5 h-5" />
@@ -112,17 +122,25 @@ export function Lightbox({
           </button>
         </div>
 
-        <div className="text-center space-y-1">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-5 text-center">
           <p
-            className={`text-lg sm:text-xl font-semibold text-[#FAF6EE] ${
+            className={`text-lg sm:text-xl font-bold text-[#FAF6EE] ${
               lang === 'ar' ? 'font-display-ar' : 'font-display-en'
             }`}
           >
-            {lang === 'ar' ? photo.titleAr : photo.titleEn}
+            {photoName}
           </p>
-          <p className="text-sm text-[#D8CFC0]">
-            {lang === 'ar' ? photo.captionAr : photo.captionEn}
-          </p>
+          {originalPostUrl && (
+            <a
+              href={originalPostUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 min-h-[44px] px-4 py-2 rounded-full text-sm font-semibold border border-[#D4AE5E]/65 text-[#F4EFE4] hover:bg-[#D4AE5E] hover:text-[#081523] transition-colors whitespace-nowrap"
+            >
+              <span>{t.actions.originalPost}</span>
+              <ExternalLink className="w-4 h-4 shrink-0" aria-hidden="true" />
+            </a>
+          )}
         </div>
       </div>
     </div>

@@ -26,12 +26,44 @@
       href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
+    <script id="crumbled-bakery-jsonld" type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Bakery",
+        "name": "Crumbled | كرمبلد",
+        "url": "/crumbledsa-riyadh/",
+        "sameAs": [
+          "https://www.instagram.com/crumbledsa/",
+          "https://linktr.ee/crumbledsa"
+        ],
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Prince Turki Road, Al Mohammadiyyah",
+          "addressLocality": "Riyadh",
+          "postalCode": "12364",
+          "addressCountry": "SA"
+        },
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "4.6",
+          "reviewCount": "204",
+          "bestRating": "5"
+        },
+        "hasMap": "https://www.google.com/maps/place/Crumbled+%7C+%D9%83%D8%B1%D9%85%D8%A8%D9%84%D8%AF%E2%80%AD/@24.7384029,46.6425404,17z/data=!3m1!4b1!4m6!3m5!1s0x3e2ee3d54478c22d:0x498971c1f5b27634!8m2!3d24.7384029!4d46.6425404!16s%2Fg%2F11l37jn0zh"
+      }
+    </script>
     <script>
       (function () {
         try {
           var savedTheme = localStorage.getItem('crumbled-theme');
           if (savedTheme === 'dark') {
             document.documentElement.classList.add('dark');
+          }
+          var ldEl = document.getElementById('crumbled-bakery-jsonld');
+          if (ldEl && window.location && window.location.origin) {
+            var data = JSON.parse(ldEl.textContent || '{}');
+            data.url = window.location.origin + window.location.pathname;
+            ldEl.textContent = JSON.stringify(data);
           }
         } catch (e) {}
       })();

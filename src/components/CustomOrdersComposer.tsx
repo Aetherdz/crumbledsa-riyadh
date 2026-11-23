@@ -64,7 +64,7 @@ export function CustomOrdersComposer({
         >
           {t.customComposer.title}
         </h2>
-        <p className="text-sm sm:text-base text-[#E6E0D5] leading-relaxed">
+        <p className="text-base text-[#EFE8DC] leading-relaxed">
           {t.customComposer.subtitle}
         </p>
       </div>
@@ -73,7 +73,7 @@ export function CustomOrdersComposer({
         {/* Start: 3 Verified Service Chips + Free-Text Field Only */}
         <div className="lg:col-span-7 space-y-5">
           <div className="space-y-2.5">
-            <p className="text-xs font-medium text-[#E6E0D5]">
+            <p className="text-sm font-semibold text-[#EFE8DC]">
               {t.customComposer.serviceLabel}
             </p>
             <div className="flex flex-wrap items-center gap-2.5">
@@ -88,10 +88,10 @@ export function CustomOrdersComposer({
                       setSelectedService(service.key);
                       setCopied(false);
                     }}
-                    className={`px-4 py-2.5 rounded-full text-xs sm:text-sm font-medium transition-colors cursor-pointer whitespace-nowrap ${
+                    className={`min-h-[44px] px-4 py-2.5 rounded-full text-sm sm:text-base font-semibold transition-colors cursor-pointer whitespace-nowrap ${
                       isSelected
                         ? 'bg-[#FAF6EE] text-[#081523] border-2 border-[#FAF6EE]'
-                        : 'bg-[#143454] text-[#FAF6EE] border-2 border-[#FAF6EE]/25 hover:border-[#FAF6EE]/60'
+                        : 'bg-[#143454] text-[#FAF6EE] border-2 border-[#FAF6EE]/35 hover:border-[#FAF6EE]'
                     }`}
                   >
                     {lang === 'ar' ? service.labelAr : service.labelEn}
@@ -104,7 +104,7 @@ export function CustomOrdersComposer({
           <div className="space-y-2">
             <label
               htmlFor="crumbled-custom-message"
-              className="block text-xs font-medium text-[#E6E0D5]"
+              className="block text-sm font-semibold text-[#EFE8DC]"
             >
               {t.customComposer.textLabel}
             </label>
@@ -117,52 +117,52 @@ export function CustomOrdersComposer({
                 setCopied(false);
               }}
               placeholder={t.customComposer.textPlaceholder}
-              className="w-full rounded-xl px-4 py-3 text-sm bg-[#0A1E31] text-[#FAF6EE] placeholder:text-[#CBD5E1]/70 border-2 border-[#FAF6EE]/25 focus:border-[#D8B66E] resize-y"
+              className="w-full rounded-xl px-4 py-3 text-base bg-[#0A1E31] text-[#FAF6EE] placeholder:text-[#D9E2EC] border-2 border-[#FAF6EE]/30 focus:border-[#E4C276] resize-y"
             />
           </div>
         </div>
 
         {/* End: Live Composed Preview + Clear 2s Copy Button + Verified External Links Only */}
-        <div className="lg:col-span-5 rounded-xl p-5 bg-[#0A1E31] border-2 border-[#FAF6EE]/20 flex flex-col justify-between gap-5">
+        <div className="lg:col-span-5 rounded-xl p-5 bg-[#0A1E31] border-2 border-[#FAF6EE]/25 flex flex-col justify-between gap-5">
           <div className="space-y-3">
             <div className="flex items-center justify-between gap-3">
-              <p className="text-xs font-medium text-[#E6E0D5]">
+              <p className="text-sm font-semibold text-[#EFE8DC]">
                 {t.customComposer.previewLabel}
               </p>
               <button
                 type="button"
                 onClick={handleCopyMessage}
                 aria-live="polite"
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full shrink-0 text-xs font-semibold bg-[#16395C] text-[#FAF6EE] border-2 border-[#FAF6EE]/30 hover:bg-[#1E4A75] transition-colors cursor-pointer whitespace-nowrap"
+                className="min-h-[44px] inline-flex items-center gap-1.5 px-4 py-2 rounded-full shrink-0 text-sm font-semibold bg-[#16395C] text-[#FAF6EE] border-2 border-[#FAF6EE]/40 hover:bg-[#1E4A75] transition-colors cursor-pointer whitespace-nowrap"
               >
                 {copied ? (
                   <>
-                    <Check className="w-3.5 h-3.5" aria-hidden="true" />
+                    <Check className="w-4 h-4" aria-hidden="true" />
                     <span>{t.actions.messageCopied}</span>
                   </>
                 ) : (
                   <>
-                    <Copy className="w-3.5 h-3.5" aria-hidden="true" />
+                    <Copy className="w-4 h-4" aria-hidden="true" />
                     <span>{t.actions.copyMessage}</span>
                   </>
                 )}
               </button>
             </div>
 
-            <div className="rounded-lg p-3.5 bg-[#0F2A44]/90 border border-[#FAF6EE]/15 text-sm text-[#FAF6EE] whitespace-pre-wrap leading-relaxed min-h-[76px]">
+            <div className="rounded-lg p-3.5 bg-[#0F2A44] border border-[#FAF6EE]/20 text-base text-[#FAF6EE] whitespace-pre-wrap leading-relaxed min-h-[76px]">
               {composedMessage}
             </div>
           </div>
 
-          <div className="space-y-3 pt-3 border-t border-[#FAF6EE]/15">
+          <div className="space-y-3 pt-3 border-t border-[#FAF6EE]/20">
             <div className="flex flex-wrap items-center gap-2.5">
               <a
                 href={VERIFIED_LINKS.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold bg-[#D4AE5E] text-[#081523] hover:bg-[#E0BE74] transition-colors whitespace-nowrap"
+                className="min-h-[46px] inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full text-base font-bold bg-[#D8B464] text-[#081523] hover:bg-[#E5C57B] transition-colors whitespace-nowrap"
               >
-                <Instagram className="w-4 h-4" aria-hidden="true" />
+                <Instagram className="w-4 h-4 shrink-0" aria-hidden="true" />
                 <span>{t.actions.instagramDm}</span>
               </a>
 
@@ -170,23 +170,23 @@ export function CustomOrdersComposer({
                 href={VERIFIED_LINKS.orderHub}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium border-2 border-[#FAF6EE]/40 text-[#FAF6EE] hover:bg-white/10 transition-colors whitespace-nowrap"
+                className="min-h-[46px] inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full text-base font-semibold border-2 border-[#FAF6EE]/50 text-[#FAF6EE] hover:bg-white/10 transition-colors whitespace-nowrap"
               >
                 <span>{t.actions.orderHub}</span>
-                <ExternalLink className="w-4 h-4" aria-hidden="true" />
+                <ExternalLink className="w-4 h-4 shrink-0" aria-hidden="true" />
               </a>
             </div>
 
-            <p className="text-xs text-[#E2DDD2] leading-relaxed">
+            <p className="text-sm text-[#EFE8DC] leading-relaxed">
               {t.customComposer.disclaimer}
             </p>
 
             {showDeliveryNote && (
-              <p className="text-xs text-[#CBD5E1]">
+              <p className="text-sm text-[#EFE8DC]">
                 {t.products.deliveryNote}{' '}
-                <span dir="ltr" className="font-semibold text-[#FAF6EE]">
+                <bdi dir="ltr" className="font-bold text-[#FAF6EE]">
                   {VERIFIED_INFO.deliveryApps.join(' · ')}
-                </span>
+                </bdi>
               </p>
             )}
           </div>

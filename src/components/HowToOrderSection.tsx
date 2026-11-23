@@ -105,9 +105,9 @@ export function HowToOrderSection({ lang }: HowToOrderSectionProps) {
           </div>
         </div>
 
-        {/* 4. Visit Branch + Google Maps Search Link */}
+        {/* 4. Visit Branch + Verified Google Maps Place Link */}
         <a
-          href={VERIFIED_LINKS.googleMapsSearch}
+          href={VERIFIED_LINKS.googleMapsPlace}
           target="_blank"
           rel="noopener noreferrer"
           className="group flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-6 py-5 hover:bg-[#0F2A44]/[0.03] dark:hover:bg-white/[0.04] transition-colors"

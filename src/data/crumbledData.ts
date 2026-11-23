@@ -21,8 +21,8 @@ export interface ProductItem {
   category: 'signature' | 'bespoke';
   nameAr: string;
   nameEn: string;
-  subtitleAr?: string;
-  subtitleEn?: string;
+  tagAr: string;
+  tagEn: string;
   photoUrl?: string;
   photoAltAr?: string;
   photoAltEn?: string;
@@ -43,17 +43,25 @@ export const VERIFIED_INFO = {
   tagline: 'Mouthful & Delightful',
   addressEn: 'Prince Turki Road, Al Mohammadiyyah, Riyadh 12364, Saudi Arabia',
   addressAr: 'طريق الأمير تركي، حي المحمدية، الرياض 12364، المملكة العربية السعودية',
+  plusCode: 'PJQV+92',
   googleRating: '4.6',
+  googleReviewCount: 204,
   deliveryApps: ['The Chefz', 'Jahez', 'Hungerstation'] as const,
 } as const;
 
 export const VERIFIED_LINKS = {
   instagram: 'https://www.instagram.com/crumbledsa/',
   orderHub: 'https://linktr.ee/crumbledsa',
-  googleMapsSearch: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-    VERIFIED_INFO.addressEn,
-  )}`,
+  googleMapsPlace:
+    'https://www.google.com/maps/place/Crumbled+%7C+%D9%83%D8%B1%D9%85%D8%A8%D9%84%D8%AF%E2%80%AD/@24.7384029,46.6425404,17z/data=!3m1!4b1!4m6!3m5!1s0x3e2ee3d54478c22d:0x498971c1f5b27634!8m2!3d24.7384029!4d46.6425404!16s%2Fg%2F11l37jn0zh',
+  googleMapsEmbed:
+    'https://maps.google.com/maps?q=Crumbled%2C%20Prince%20Turki%20Road%2C%20Al%20Mohammadiyyah%2C%20Riyadh%2012364&output=embed',
 } as const;
+
+export function getInstagramPostUrl(imageUrl: string): string | null {
+  const match = imageUrl.match(/www\.instagram\.com\/p\/([A-Za-z0-9_-]+)/);
+  return match ? `https://www.instagram.com/p/${match[1]}/` : null;
+}
 
 export const REAL_PHOTOS: RealPhoto[] = [
   {
@@ -62,10 +70,10 @@ export const REAL_PHOTOS: RealPhoto[] = [
     galleryCategory: 'cakes',
     titleAr: 'Cloud Cake',
     titleEn: 'Cloud Cake',
-    captionAr: 'مزيج براوني البندق والفانيليا',
-    captionEn: 'Hazelnut brownie and vanilla blend',
-    altAr: 'صورة Cloud Cake من كرمبلد الرياض — مزيج براوني البندق والفانيليا',
-    altEn: 'Cloud Cake by Crumbled Riyadh — hazelnut brownie and vanilla blend',
+    captionAr: 'Cloud Cake',
+    captionEn: 'Cloud Cake',
+    altAr: 'Cloud Cake',
+    altEn: 'Cloud Cake',
     featured: true,
   },
   {
@@ -74,10 +82,10 @@ export const REAL_PHOTOS: RealPhoto[] = [
     galleryCategory: 'cakes',
     titleAr: 'كيك الشوكولاتة',
     titleEn: 'Chocolate Cake',
-    captionAr: 'كيك الشوكولاتة من Crumbled',
-    captionEn: 'Signature Chocolate Cake by Crumbled',
-    altAr: 'صورة كيك الشوكولاتة من كرمبلد الرياض',
-    altEn: 'Chocolate Cake by Crumbled Riyadh',
+    captionAr: 'كيك الشوكولاتة',
+    captionEn: 'Chocolate Cake',
+    altAr: 'كيك الشوكولاتة',
+    altEn: 'Chocolate Cake',
   },
   {
     id: 'choux-damour',
@@ -85,10 +93,10 @@ export const REAL_PHOTOS: RealPhoto[] = [
     galleryCategory: 'sweets',
     titleAr: "صينية Choux d'Amour",
     titleEn: "Choux d'Amour Tray",
-    captionAr: "تقديم صينية Choux d'Amour",
-    captionEn: "Choux d'Amour presentation tray",
-    altAr: "صورة صينية Choux d'Amour من كرمبلد الرياض",
-    altEn: "Choux d'Amour tray by Crumbled Riyadh",
+    captionAr: "صينية Choux d'Amour",
+    captionEn: "Choux d'Amour Tray",
+    altAr: "صينية Choux d'Amour",
+    altEn: "Choux d'Amour Tray",
   },
   {
     id: 'caramel-pour',
@@ -96,10 +104,10 @@ export const REAL_PHOTOS: RealPhoto[] = [
     galleryCategory: 'sweets',
     titleAr: 'سكب الكراميل',
     titleEn: 'Caramel Pour',
-    captionAr: 'حلويات Crumbled بلمسة الكراميل',
-    captionEn: 'Crumbled Sweets with caramel pour',
-    altAr: 'صورة سكب الكراميل على حلويات كرمبلد الرياض',
-    altEn: 'Caramel pour on Crumbled Sweets in Riyadh',
+    captionAr: 'سكب الكراميل',
+    captionEn: 'Caramel Pour',
+    altAr: 'سكب الكراميل',
+    altEn: 'Caramel Pour',
   },
   {
     id: 'dates-warmer',
@@ -109,8 +117,8 @@ export const REAL_PHOTOS: RealPhoto[] = [
     titleEn: 'Crumbled Dates Warmer',
     captionAr: 'Crumbled Dates Warmer',
     captionEn: 'Crumbled Dates Warmer',
-    altAr: 'صورة Crumbled Dates Warmer من كرمبلد الرياض',
-    altEn: 'Crumbled Dates Warmer by Crumbled Riyadh',
+    altAr: 'Crumbled Dates Warmer',
+    altEn: 'Crumbled Dates Warmer',
   },
 ];
 
@@ -120,79 +128,79 @@ export const PRODUCTS: ProductItem[] = [
     category: 'signature',
     nameAr: 'Cloud Cake',
     nameEn: 'Cloud Cake',
-    subtitleAr: 'مزيج براوني البندق والفانيليا',
-    subtitleEn: 'Hazelnut brownie and vanilla blend',
+    tagAr: 'كيك مميز',
+    tagEn: 'Signature Cake',
     photoUrl: REAL_PHOTOS[0].url,
-    photoAltAr: REAL_PHOTOS[0].altAr,
-    photoAltEn: REAL_PHOTOS[0].altEn,
+    photoAltAr: 'Cloud Cake',
+    photoAltEn: 'Cloud Cake',
   },
   {
     id: 'chocolate-cake',
     category: 'signature',
     nameAr: 'كيك الشوكولاتة',
     nameEn: 'Chocolate Cake',
-    subtitleAr: 'كيك الشوكولاتة الخاص بـ Crumbled',
-    subtitleEn: 'Crumbled signature chocolate cake',
+    tagAr: 'كيك',
+    tagEn: 'Cake',
     photoUrl: REAL_PHOTOS[1].url,
-    photoAltAr: REAL_PHOTOS[1].altAr,
-    photoAltEn: REAL_PHOTOS[1].altEn,
+    photoAltAr: 'كيك الشوكولاتة',
+    photoAltEn: 'Chocolate Cake',
   },
   {
     id: 'choux-damour',
     category: 'signature',
     nameAr: "Choux d'Amour",
     nameEn: "Choux d'Amour",
-    subtitleAr: "صينية Choux d'Amour للضيافة والمناسبات",
-    subtitleEn: "Choux d'Amour tray for gatherings",
+    tagAr: 'صينية ضيافة',
+    tagEn: 'Gathering Tray',
     photoUrl: REAL_PHOTOS[2].url,
-    photoAltAr: REAL_PHOTOS[2].altAr,
-    photoAltEn: REAL_PHOTOS[2].altEn,
+    photoAltAr: "Choux d'Amour",
+    photoAltEn: "Choux d'Amour",
   },
   {
     id: 'dates-warmer',
     category: 'signature',
     nameAr: 'Crumbled Dates Warmer',
     nameEn: 'Crumbled Dates Warmer',
-    subtitleAr: 'حلى التمر الدافئ من Crumbled',
-    subtitleEn: 'Warm date dessert by Crumbled',
+    tagAr: 'حلى دافئ',
+    tagEn: 'Warm Sweet',
     photoUrl: REAL_PHOTOS[4].url,
-    photoAltAr: REAL_PHOTOS[4].altAr,
-    photoAltEn: REAL_PHOTOS[4].altEn,
+    photoAltAr: 'Crumbled Dates Warmer',
+    photoAltEn: 'Crumbled Dates Warmer',
   },
   {
     id: 'crumbled-sweets',
     category: 'signature',
     nameAr: 'حلويات Crumbled',
     nameEn: 'Crumbled Sweets',
-    subtitleAr: 'تشكيلة حلويات Crumbled المميزة',
-    subtitleEn: 'Curated Crumbled sweets selection',
+    tagAr: 'حلويات',
+    tagEn: 'Sweets',
     photoUrl: REAL_PHOTOS[3].url,
-    photoAltAr: REAL_PHOTOS[3].altAr,
-    photoAltEn: REAL_PHOTOS[3].altEn,
+    photoAltAr: 'حلويات Crumbled',
+    photoAltEn: 'Crumbled Sweets',
   },
   {
     id: 'custom-3d-cakes',
     category: 'bespoke',
     nameAr: 'كيك مخصص وكيك ثلاثي الأبعاد',
     nameEn: 'Custom & 3D Cakes',
-    subtitleAr: 'تنفيذ كيك مخصص وثلاثي الأبعاد لمناسباتكم عبر التواصل المباشر',
-    subtitleEn: 'Bespoke and 3D sculpted cakes prepared upon direct request',
+    tagAr: 'طلب مخصص',
+    tagEn: 'Custom Order',
   },
   {
     id: 'catering',
     category: 'bespoke',
     nameAr: 'ضيافة (Catering)',
     nameEn: 'Catering',
-    subtitleAr: 'تجهيز وتنسيق ضيافة الحلويات للمناسبات والاجتماعات',
-    subtitleEn: 'Dessert catering tailored for events and gatherings',
+    tagAr: 'ضيافة ومناسبات',
+    tagEn: 'Event Catering',
   },
   {
     id: 'cake-inscription',
     category: 'bespoke',
     nameAr: 'كتابة على الكيك حسب الطلب',
     nameEn: 'Custom Cake Inscription',
-    subtitleAr: 'إضافة عبارة مخصصة على الكيك حسب اختياركم',
-    subtitleEn: 'Personalized wording written on your cake',
+    tagAr: 'تخصيص العبارة',
+    tagEn: 'Custom Inscription',
   },
 ];
 
@@ -262,13 +270,15 @@ export const COPY = {
     actions: {
       orderHub: 'مركز الطلب',
       instagramDm: 'رسائل إنستغرام',
+      orderViaInstagram: 'اطلب عبر إنستغرام',
+      originalPost: 'المنشور الأصلي',
       viewProducts: 'تصفح المنتجات',
       showProducts: 'عرض المنتجات',
       viewGallery: 'عرض المعرض الكامل',
       visitUs: 'التواصل وزيارتنا',
       copyAddress: 'نسخ العنوان',
       addressCopied: 'تم النسخ',
-      openGoogleMaps: 'فتح الموقع على خرائط Google',
+      openGoogleMaps: 'افتح في خرائط Google',
       openInGoogleMaps: 'افتح في خرائط Google',
       directions: 'الاتجاهات',
       copyMessage: 'نسخ الرسالة',
@@ -276,9 +286,9 @@ export const COPY = {
       clearSearch: 'مسح البحث',
       resetFilters: 'إعادة عرض الكل',
       switchToOtherLang: 'EN',
-      switchLangAria: 'Switch language to English',
-      toggleDarkAria: 'التبديل إلى الوضع الداكن',
-      toggleLightAria: 'التبديل إلى الوضع الفاتح',
+      switchLangAria: 'التبديل إلى اللغة الإنجليزية (Switch to English)',
+      toggleDarkAria: 'الوضع الفاتح — التبديل إلى الوضع الداكن',
+      toggleLightAria: 'الوضع الداكن — التبديل إلى الوضع الفاتح',
       openMenuAria: 'فتح القائمة',
       closeMenuAria: 'إغلاق القائمة',
       closeLightboxAria: 'إغلاق الصورة',
@@ -289,6 +299,8 @@ export const COPY = {
     },
     home: {
       heroLine: 'Cloud Cake وكيك المناسبات والكتابة على الكيك حسب الطلب',
+      pricingNotice:
+        'تُؤكَّد الأسعار وتفاصيل الطلب عبر رسائل إنستغرام أو مركز الطلب أو في تطبيقات التوصيل.',
       servicesSummaryLine: 'كيك مخصص وثلاثي الأبعاد، ضيافة، كتابة على الكيك',
       heroAddressShort: 'طريق الأمير تركي، المحمدية، الرياض',
       serviceZones: {
@@ -315,7 +327,9 @@ export const COPY = {
       faqTitle: 'أسئلة شائعة',
       faqSubtitle: 'إجابات موجزة من المعلومات الموثقة.',
       visitHeading: 'زورونا',
-      ratingText: '4.6 على خرائط Google',
+      ratingText: '4.6 على خرائط Google (204 تقييماً)',
+      plusCodeLabel: 'رمز Plus Code:',
+      mapTitle: 'خريطة موقع كرمبلد',
       deliveryHeading: 'متوفر عبر تطبيقات التوصيل',
     },
     products: {
@@ -347,7 +361,7 @@ export const COPY = {
     },
     gallery: {
       title: 'المعرض',
-      subtitle: 'مجموعة الصور الحقيقية لأصناف وتقديمات Crumbled في الرياض.',
+      subtitle: 'صور من حسابنا على إنستغرام',
       tapHint: 'اضغط على أي صورة لعرضها بالحجم الكامل',
       filterAll: 'الكل',
       filterCakes: 'الكيك',
@@ -360,8 +374,8 @@ export const COPY = {
         'يسعدنا استقبال طلباتكم عبر مركز الطلب ورسائل إنستغرام، وزيارتكم في الرياض.',
       addressLabel: 'الموقع في الرياض',
       addressVerifiedLabel: 'العنوان الموثق',
-      ratingLabel: 'تقييم Google Maps',
-      ratingValue: '4.6 من 5',
+      ratingLabel: 'تقييم خرائط Google',
+      ratingValue: '4.6 من 5 (204 تقييماً)',
       channelsTitle: 'قنوات الطلب والتواصل',
       instagramDesc:
         'للاستفسار عن الكيك المخصص، الكيك ثلاثي الأبعاد، والكتابة على الكيك حسب الطلب.',
@@ -391,23 +405,25 @@ export const COPY = {
     actions: {
       orderHub: 'Order Hub',
       instagramDm: 'Instagram DM',
+      orderViaInstagram: 'Order via Instagram',
+      originalPost: 'Original Post',
       viewProducts: 'Explore Products',
       showProducts: 'View Products',
       viewGallery: 'View Full Gallery',
       visitUs: 'Contact & Visit',
       copyAddress: 'Copy Address',
       addressCopied: 'Copied',
-      openGoogleMaps: 'Open on Google Maps',
+      openGoogleMaps: 'Open in Google Maps',
       openInGoogleMaps: 'Open in Google Maps',
       directions: 'Directions',
       copyMessage: 'Copy Message',
       messageCopied: 'Copied',
       clearSearch: 'Clear search',
       resetFilters: 'Show All',
-      switchToOtherLang: 'ع',
-      switchLangAria: 'التبديل إلى اللغة العربية',
-      toggleDarkAria: 'Switch to dark mode',
-      toggleLightAria: 'Switch to light mode',
+      switchToOtherLang: 'عربي',
+      switchLangAria: 'Switch to Arabic (التبديل إلى اللغة العربية)',
+      toggleDarkAria: 'Light mode — switch to dark mode',
+      toggleLightAria: 'Dark mode — switch to light mode',
       openMenuAria: 'Open menu',
       closeMenuAria: 'Close menu',
       closeLightboxAria: 'Close photo',
@@ -418,6 +434,8 @@ export const COPY = {
     },
     home: {
       heroLine: 'Cloud Cake, occasion cakes, and custom cake inscriptions',
+      pricingNotice:
+        'Prices and order details are confirmed via Instagram DM, the Order Hub, or delivery apps.',
       servicesSummaryLine: 'Custom & 3D cakes, catering, cake inscriptions',
       heroAddressShort: 'Prince Turki Road, Al Mohammadiyyah, Riyadh',
       serviceZones: {
@@ -445,7 +463,9 @@ export const COPY = {
       faqTitle: 'Frequently Asked Questions',
       faqSubtitle: 'Concise answers from verified information.',
       visitHeading: 'Visit Us',
-      ratingText: '4.6 on Google Maps',
+      ratingText: '4.6 on Google Maps (204 reviews)',
+      plusCodeLabel: 'Plus Code:',
+      mapTitle: 'خريطة موقع كرمبلد',
       deliveryHeading: 'Available on delivery apps',
     },
     products: {
@@ -477,7 +497,7 @@ export const COPY = {
     },
     gallery: {
       title: 'Gallery',
-      subtitle: 'Real photography featuring Crumbled Riyadh creations.',
+      subtitle: 'Photos from our Instagram account',
       tapHint: 'Select any photo to inspect full screen',
       filterAll: 'All',
       filterCakes: 'Cakes',
@@ -491,7 +511,7 @@ export const COPY = {
       addressLabel: 'Riyadh Location',
       addressVerifiedLabel: 'Verified Address',
       ratingLabel: 'Google Maps Rating',
-      ratingValue: '4.6 out of 5',
+      ratingValue: '4.6 out of 5 (204 reviews)',
       channelsTitle: 'Direct Channels',
       instagramDesc:
         'Message us for custom cakes, 3D cakes, catering, and personalized cake inscriptions.',
