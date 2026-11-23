@@ -1,15 +1,14 @@
-import { useState } from 'react';
-import { ExternalLink, Instagram, Maximize2 } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { Maximize2, Search, X } from 'lucide-react';
 import {
   COPY,
   PRODUCTS,
   REAL_PHOTOS,
-  VERIFIED_INFO,
-  VERIFIED_LINKS,
   type Language,
 } from '../data/crumbledData';
 import { BrandBadge } from '../components/BrandBadge';
 import { PhotoFrame } from '../components/PhotoFrame';
+import { CustomOrdersComposer } from '../components/CustomOrdersComposer';
 
 interface ProductsPageProps {
   lang: Language;
@@ -20,21 +19,44 @@ type CategoryFilter = 'all' | 'signature' | 'bespoke';
 
 export function ProductsPage({ lang, onOpenPhoto }: ProductsPageProps) {
   const [filter, setFilter] = useState<CategoryFilter>('all');
+  const [query, setQuery] = useState('');
   const t = COPY[lang];
 
-  const signatureItems = PRODUCTS.filter((p) => p.category === 'signature');
-  const bespokeItems = PRODUCTS.filter((p) => p.category === 'bespoke');
+  const normalizedQuery = query.trim().toLowerCase();
 
-  const showSignature = filter === 'all' || filter === 'signature';
-  const showBespoke = filter === 'all' || filter === 'bespoke';
+  const filteredProducts = useMemo(() => {
+    return PRODUCTS.filter((item) => {
+      if (filter !== 'all' && item.category !== filter) return false;
+      if (!normalizedQuery) return true;
+      const haystack = [
+        item.nameAr,
+        item.nameEn,
+        item.subtitleAr ?? '',
+        item.subtitleEn ?? '',
+      ]
+        .join(' ')
+        .toLowerCase();
+      return haystack.includes(normalizedQuery);
+    });
+  }, [filter, normalizedQuery]);
+
+  const signatureItems = filteredProducts.filter(
+    (p) => p.category === 'signature',
+  );
+  const bespokeItems = filteredProducts.filter((p) => p.category === 'bespoke');
 
   const getPhotoIndex = (photoUrl?: string) =>
     photoUrl ? REAL_PHOTOS.findIndex((photo) => photo.url === photoUrl) : -1;
 
+  const handleReset = () => {
+    setFilter('all');
+    setQuery('');
+  };
+
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-14 space-y-12">
       {/* Page Header with Brand Emblem */}
-      <header className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-[#0F2A44]/10 dark:border-[#C9A45C]/15">
+      <header className="space-y-6 pb-8 border-b border-[#0F2A44]/10 dark:border-[#C9A45C]/15">
         <div className="flex items-start gap-4 sm:gap-5">
           <BrandBadge size="md" className="mt-0.5" />
           <div className="space-y-2">
@@ -54,42 +76,93 @@ export function ProductsPage({ lang, onOpenPhoto }: ProductsPageProps) {
           </div>
         </div>
 
-        {/* Interactive Filter Tabs */}
-        <div
-          role="tablist"
-          aria-label={t.products.title}
-          className="inline-flex items-center gap-1 p-1 rounded-full bg-[#EFE7D8] dark:bg-[#0E2236] border border-[#0F2A44]/10 dark:border-[#C9A45C]/20 self-start md:self-auto"
-        >
-          {(
-            [
-              { key: 'all', label: t.products.filterAll },
-              { key: 'signature', label: t.products.filterSignature },
-              { key: 'bespoke', label: t.products.filterBespoke },
-            ] as const
-          ).map((tab) => {
-            const active = filter === tab.key;
-            return (
-              <button
-                key={tab.key}
-                type="button"
-                role="tab"
-                aria-selected={active}
-                onClick={() => setFilter(tab.key)}
-                className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap shrink-0 transition-colors cursor-pointer ${
-                  active
-                    ? 'bg-[#0F2A44] text-[#FAF6EE] dark:bg-[#C9A45C] dark:text-[#081523]'
-                    : 'text-[#0F2A44]/75 dark:text-[#F4EFE4]/75 hover:text-[#0F2A44] dark:hover:text-[#FAF6EE]'
-                }`}
-              >
-                {tab.label}
-              </button>
-            );
-          })}
+        {/* Interactive Category Tabs + Instant Bilingual Search */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div
+            role="tablist"
+            aria-label={t.products.title}
+            className="inline-flex items-center gap-1 p-1 rounded-full bg-[#EFE7D8] dark:bg-[#0E2236] border border-[#0F2A44]/10 dark:border-[#C9A45C]/20 self-start"
+          >
+            {(
+              [
+                { key: 'all', label: t.products.filterAll },
+                { key: 'signature', label: t.products.filterSignature },
+                { key: 'bespoke', label: t.products.filterBespoke },
+              ] as const
+            ).map((tab) => {
+              const active = filter === tab.key;
+              return (
+                <button
+                  key={tab.key}
+                  type="button"
+                  role="tab"
+                  aria-selected={active}
+                  onClick={() => setFilter(tab.key)}
+                  className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap shrink-0 transition-colors cursor-pointer ${
+                    active
+                      ? 'bg-[#0F2A44] text-[#FAF6EE] dark:bg-[#C9A45C] dark:text-[#081523]'
+                      : 'text-[#0F2A44]/75 dark:text-[#F4EFE4]/75 hover:text-[#0F2A44] dark:hover:text-[#FAF6EE]'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="flex items-center gap-3 w-full lg:w-auto lg:min-w-[340px]">
+            <div className="relative flex-1">
+              <Search
+                className="w-4 h-4 text-[#0F2A44]/50 dark:text-[#D8B66E]/70 absolute top-1/2 -translate-y-1/2 start-3.5 pointer-events-none"
+                aria-hidden="true"
+              />
+              <input
+                type="search"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                aria-label={t.products.searchLabel}
+                placeholder={t.products.searchPlaceholder}
+                className="w-full rounded-full ps-10 pe-10 py-2.5 text-sm bg-white dark:bg-[#0E2236] text-[#0F2A44] dark:text-[#FAF6EE] placeholder:text-[#0F2A44]/50 dark:placeholder:text-[#F4EFE4]/50 border border-[#0F2A44]/15 dark:border-[#C9A45C]/25 focus:border-[#C9A45C] focus:outline-none"
+              />
+              {query && (
+                <button
+                  type="button"
+                  onClick={() => setQuery('')}
+                  aria-label={t.actions.clearSearch}
+                  className="w-7 h-7 rounded-full flex items-center justify-center absolute top-1/2 -translate-y-1/2 end-2 text-[#0F2A44]/65 dark:text-[#D8B66E] hover:bg-[#0F2A44]/10 dark:hover:bg-white/10 transition-colors cursor-pointer"
+                >
+                  <X className="w-3.5 h-3.5" aria-hidden="true" />
+                </button>
+              )}
+            </div>
+            <span className="text-xs font-medium text-[#9A742B] dark:text-[#D8B66E] whitespace-nowrap tabular-nums">
+              {t.products.resultsCount(filteredProducts.length)}
+            </span>
+          </div>
         </div>
       </header>
 
+      {/* Empty Search Result State */}
+      {filteredProducts.length === 0 && (
+        <div className="rounded-2xl p-10 text-center bg-white dark:bg-[#0E2236] border border-[#0F2A44]/10 dark:border-[#C9A45C]/20 space-y-4">
+          <p className="text-lg font-semibold text-[#0F2A44] dark:text-[#FAF6EE]">
+            {t.products.noResultsTitle}
+          </p>
+          <p className="text-sm text-[#0F2A44]/75 dark:text-[#F4EFE4]/75">
+            {t.products.noResultsDesc}
+          </p>
+          <button
+            type="button"
+            onClick={handleReset}
+            className="inline-flex items-center justify-center px-5 py-2.5 rounded-full text-sm font-medium bg-[#0F2A44] text-[#FAF6EE] hover:bg-[#17395B] dark:bg-[#C9A45C] dark:text-[#081523] dark:hover:bg-[#D8B66E] transition-colors cursor-pointer"
+          >
+            {t.actions.resetFilters}
+          </button>
+        </div>
+      )}
+
       {/* Signature Cakes & Sweets (Real Photography, Zero Prices) */}
-      {showSignature && (
+      {signatureItems.length > 0 && (
         <section className="space-y-6">
           <h2
             className={`text-xl sm:text-2xl font-bold text-[#0F2A44] dark:text-[#FAF6EE] ${
@@ -104,7 +177,7 @@ export function ProductsPage({ lang, onOpenPhoto }: ProductsPageProps) {
               return (
                 <article
                   key={item.id}
-                  className="group rounded-xl overflow-hidden bg-white dark:bg-[#0E2236] border border-[#0F2A44]/10 dark:border-[#C9A45C]/15 flex flex-col transition-transform duration-200 hover:-translate-y-0.5"
+                  className="group rounded-xl overflow-hidden bg-white dark:bg-[#0E2236] border border-[#0F2A44]/10 dark:border-[#C9A45C]/15 flex flex-col transition-transform duration-200 hover:-translate-y-0.5 motion-reduce:transition-none"
                 >
                   {item.photoUrl && (
                     <button
@@ -124,7 +197,7 @@ export function ProductsPage({ lang, onOpenPhoto }: ProductsPageProps) {
                         }
                         fallbackTitle={lang === 'ar' ? item.nameAr : item.nameEn}
                         className="w-full h-full"
-                        imgClassName="group-hover:scale-[1.03] transition-transform duration-500"
+                        imgClassName="group-hover:scale-[1.03] transition-transform duration-500 motion-reduce:transition-none"
                       />
                       <span
                         aria-hidden="true"
@@ -152,7 +225,7 @@ export function ProductsPage({ lang, onOpenPhoto }: ProductsPageProps) {
       )}
 
       {/* Custom, 3D Cakes, Catering & Inscription */}
-      {showBespoke && (
+      {bespokeItems.length > 0 && (
         <section className="space-y-6">
           <h2
             className={`text-xl sm:text-2xl font-bold text-[#0F2A44] dark:text-[#FAF6EE] ${
@@ -184,49 +257,8 @@ export function ProductsPage({ lang, onOpenPhoto }: ProductsPageProps) {
         </section>
       )}
 
-      {/* Ordering Channels & Delivery Apps (Text Only) */}
-      <section className="rounded-2xl p-7 sm:p-9 bg-[#0F2A44] text-[#FAF6EE] border border-[#C9A45C]/30 flex flex-col lg:flex-row lg:items-center justify-between gap-7">
-        <div className="space-y-2.5 max-w-2xl">
-          <h2
-            className={`text-2xl font-bold text-[#FAF6EE] ${
-              lang === 'ar' ? 'font-display-ar' : 'font-display-en'
-            }`}
-          >
-            {t.products.orderCtaTitle}
-          </h2>
-          <p className="text-sm sm:text-base text-[#E4DCCD] leading-relaxed">
-            {t.products.orderCtaText}
-          </p>
-          <p className="text-xs sm:text-sm text-[#D8B66E] pt-1">
-            {t.products.deliveryNote}{' '}
-            <span dir="ltr" className="font-semibold text-[#FAF6EE]">
-              {VERIFIED_INFO.deliveryApps.join(' · ')}
-            </span>
-          </p>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-3 shrink-0">
-          <a
-            href={VERIFIED_LINKS.orderHub}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium bg-[#C9A45C] text-[#081523] hover:bg-[#D8B66E] transition-colors whitespace-nowrap"
-          >
-            <span>{t.actions.orderHub}</span>
-            <ExternalLink className="w-4 h-4" aria-hidden="true" />
-          </a>
-
-          <a
-            href={VERIFIED_LINKS.instagram}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-5 py-3 rounded-full text-sm font-medium border border-[#C9A45C]/45 text-[#FAF6EE] hover:bg-white/10 transition-colors whitespace-nowrap"
-          >
-            <Instagram className="w-4 h-4 text-[#D8B66E]" aria-hidden="true" />
-            <span>{t.actions.instagramDm}</span>
-          </a>
-        </div>
-      </section>
+      {/* Custom Orders & Catering Message Composer */}
+      <CustomOrdersComposer lang={lang} showDeliveryNote />
     </div>
   );
 }

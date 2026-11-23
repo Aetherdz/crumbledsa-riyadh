@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Menu, Moon, Sun, X } from 'lucide-react';
 import {
   COPY,
@@ -28,7 +28,39 @@ export function Header({
   onToggleTheme,
 }: HeaderProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
   const t = COPY[lang];
+
+  useEffect(() => {
+    let rafId = 0;
+
+    const updateProgress = () => {
+      rafId = 0;
+      const doc = document.documentElement;
+      const scrollable = doc.scrollHeight - window.innerHeight;
+      if (scrollable <= 0) {
+        setScrollProgress(0);
+        return;
+      }
+      const ratio = Math.min(1, Math.max(0, window.scrollY / scrollable));
+      setScrollProgress(ratio);
+    };
+
+    const onScrollOrResize = () => {
+      if (rafId) return;
+      rafId = window.requestAnimationFrame(updateProgress);
+    };
+
+    updateProgress();
+    window.addEventListener('scroll', onScrollOrResize, { passive: true });
+    window.addEventListener('resize', onScrollOrResize, { passive: true });
+
+    return () => {
+      if (rafId) window.cancelAnimationFrame(rafId);
+      window.removeEventListener('scroll', onScrollOrResize);
+      window.removeEventListener('resize', onScrollOrResize);
+    };
+  }, [currentPage]);
 
   const handleSelectPage = (page: PageKey) => {
     onNavigate(page);
@@ -161,6 +193,19 @@ export function Header({
           </nav>
         </div>
       )}
+
+      {/* Thin 2px Gold Scroll Progress Bar (Respects prefers-reduced-motion) */}
+      <div
+        aria-hidden="true"
+        className="w-full h-[2px] bg-transparent overflow-hidden"
+      >
+        <div
+          className={`h-full w-full bg-[#C9A45C] dark:bg-[#D8B66E] transition-transform duration-100 ease-out motion-reduce:transition-none ${
+            lang === 'ar' ? 'origin-right' : 'origin-left'
+          }`}
+          style={{ transform: `scaleX(${scrollProgress})` }}
+        />
+      </div>
     </header>
   );
 }

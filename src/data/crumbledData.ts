@@ -1,9 +1,12 @@
 export type Language = 'ar' | 'en';
 export type PageKey = 'home' | 'products' | 'gallery' | 'contact';
+export type GalleryCategory = 'all' | 'cakes' | 'sweets';
+export type CustomServiceKey = 'inscription' | 'custom-3d' | 'catering';
 
 export interface RealPhoto {
   id: string;
   url: string;
+  galleryCategory: 'cakes' | 'sweets';
   titleAr: string;
   titleEn: string;
   captionAr: string;
@@ -25,10 +28,13 @@ export interface ProductItem {
   photoAltEn?: string;
 }
 
-export const VERIFIED_LINKS = {
-  instagram: 'https://www.instagram.com/crumbledsa/',
-  orderHub: 'https://linktr.ee/crumbledsa',
-} as const;
+export interface FaqItem {
+  id: string;
+  questionAr: string;
+  questionEn: string;
+  answerAr: string;
+  answerEn: string;
+}
 
 export const VERIFIED_INFO = {
   brandAr: 'كرمبلد',
@@ -41,10 +47,19 @@ export const VERIFIED_INFO = {
   deliveryApps: ['The Chefz', 'Jahez', 'Hungerstation'] as const,
 } as const;
 
+export const VERIFIED_LINKS = {
+  instagram: 'https://www.instagram.com/crumbledsa/',
+  orderHub: 'https://linktr.ee/crumbledsa',
+  googleMapsSearch: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+    VERIFIED_INFO.addressEn,
+  )}`,
+} as const;
+
 export const REAL_PHOTOS: RealPhoto[] = [
   {
     id: 'cloud-cake',
     url: 'https://images.weserv.nl/?url=www.instagram.com/p/Df-UeEXIHeb/media/?size=l&output=jpg',
+    galleryCategory: 'cakes',
     titleAr: 'Cloud Cake',
     titleEn: 'Cloud Cake',
     captionAr: 'مزيج براوني البندق والفانيليا',
@@ -56,6 +71,7 @@ export const REAL_PHOTOS: RealPhoto[] = [
   {
     id: 'chocolate-cake',
     url: 'https://images.weserv.nl/?url=www.instagram.com/p/Df-Ucl1o4ku/media/?size=l&output=jpg',
+    galleryCategory: 'cakes',
     titleAr: 'كيك الشوكولاتة',
     titleEn: 'Chocolate Cake',
     captionAr: 'كيك الشوكولاتة من Crumbled',
@@ -66,6 +82,7 @@ export const REAL_PHOTOS: RealPhoto[] = [
   {
     id: 'choux-damour',
     url: 'https://images.weserv.nl/?url=www.instagram.com/p/Dfre2BsI4Yc/media/?size=l&output=jpg',
+    galleryCategory: 'sweets',
     titleAr: "صينية Choux d'Amour",
     titleEn: "Choux d'Amour Tray",
     captionAr: "تقديم صينية Choux d'Amour",
@@ -76,6 +93,7 @@ export const REAL_PHOTOS: RealPhoto[] = [
   {
     id: 'caramel-pour',
     url: 'https://images.weserv.nl/?url=www.instagram.com/p/Dfreuvgos3G/media/?size=l&output=jpg',
+    galleryCategory: 'sweets',
     titleAr: 'سكب الكراميل',
     titleEn: 'Caramel Pour',
     captionAr: 'حلويات Crumbled بلمسة الكراميل',
@@ -86,6 +104,7 @@ export const REAL_PHOTOS: RealPhoto[] = [
   {
     id: 'dates-warmer',
     url: 'https://images.weserv.nl/?url=www.instagram.com/p/DfrerEio1Vm/media/?size=l&output=jpg',
+    galleryCategory: 'sweets',
     titleAr: 'Crumbled Dates Warmer',
     titleEn: 'Crumbled Dates Warmer',
     captionAr: 'Crumbled Dates Warmer',
@@ -177,6 +196,70 @@ export const PRODUCTS: ProductItem[] = [
   },
 ];
 
+export const CUSTOM_SERVICES: {
+  key: CustomServiceKey;
+  labelAr: string;
+  labelEn: string;
+}[] = [
+  {
+    key: 'inscription',
+    labelAr: 'كتابة على الكيك حسب الطلب',
+    labelEn: 'Custom Cake Inscription',
+  },
+  {
+    key: 'custom-3d',
+    labelAr: 'كيك مخصص وكيك ثلاثي الأبعاد',
+    labelEn: 'Custom & 3D Cakes',
+  },
+  {
+    key: 'catering',
+    labelAr: 'ضيافة (Catering)',
+    labelEn: 'Catering',
+  },
+];
+
+export const VERIFIED_FAQS: FaqItem[] = [
+  {
+    id: 'inscription',
+    questionAr: 'هل تتوفر خدمة الكتابة على الكيك؟',
+    questionEn: 'Do you offer custom cake inscriptions?',
+    answerAr: 'نعم، يوجد لدينا كتابة على الكيك حسب طلبكم.',
+    answerEn: 'Yes, custom cake inscriptions are available upon your request.',
+  },
+  {
+    id: 'cloud-cake',
+    questionAr: 'ما هو Cloud Cake؟',
+    questionEn: 'What is Cloud Cake?',
+    answerAr: 'Cloud Cake هو مزيج براوني البندق والفانيليا.',
+    answerEn: 'Cloud Cake is a hazelnut brownie and vanilla blend.',
+  },
+  {
+    id: 'custom-catering',
+    questionAr: 'كيف أطلب كيك مخصصاً أو ثلاثي الأبعاد أو ضيافة؟',
+    questionEn: 'How can I request custom cakes, 3D cakes, or catering?',
+    answerAr:
+      'يمكنكم التواصل مباشرة عبر رسائل إنستغرام أو من خلال مركز الطلب.',
+    answerEn:
+      'You can reach us directly via Instagram DM or through our Order Hub.',
+  },
+  {
+    id: 'delivery-apps',
+    questionAr: 'ما هي تطبيقات التوصيل المتوفرة؟',
+    questionEn: 'Which delivery apps are available?',
+    answerAr: 'تتوفر طلباتنا عبر التطبيقات: The Chefz وJahez وHungerstation.',
+    answerEn:
+      'Available through delivery apps: The Chefz, Jahez, and Hungerstation.',
+  },
+  {
+    id: 'location',
+    questionAr: 'أين يقع محل Crumbled في الرياض؟',
+    questionEn: 'Where is Crumbled located in Riyadh?',
+    answerAr:
+      'طريق الأمير تركي، حي المحمدية، الرياض 12364، المملكة العربية السعودية (Prince Turki Road, Al Mohammadiyyah, Riyadh 12364, Saudi Arabia).',
+    answerEn: 'Prince Turki Road, Al Mohammadiyyah, Riyadh 12364, Saudi Arabia.',
+  },
+];
+
 export const COPY = {
   ar: {
     nav: {
@@ -193,6 +276,11 @@ export const COPY = {
       visitUs: 'التواصل وزيارتنا',
       copyAddress: 'نسخ العنوان',
       addressCopied: 'تم نسخ العنوان',
+      openGoogleMaps: 'فتح الموقع على خرائط Google',
+      copyMessage: 'نسخ الرسالة',
+      messageCopied: 'تم نسخ الرسالة',
+      clearSearch: 'مسح البحث',
+      resetFilters: 'إعادة عرض الكل',
       switchToOtherLang: 'EN',
       switchLangAria: 'Switch language to English',
       toggleDarkAria: 'التبديل إلى الوضع الداكن',
@@ -203,44 +291,91 @@ export const COPY = {
       prevPhotoAria: 'الصورة السابقة',
       nextPhotoAria: 'الصورة التالية',
       zoomPhotoAria: 'تكبير الصورة',
+      selectHeroPhotoAria: 'معاينة الصورة',
     },
     home: {
       inscriptionNote: 'يوجد لدينا كتابة على الكيك حسب طلبكم',
+      quickHighlights: {
+        ratingLabel: 'تقييم خرائط Google',
+        ratingValue: '4.6 من 5',
+        locationLabel: 'الموقع',
+        locationValue: 'المحمدية، الرياض',
+        inscriptionLabel: 'تخصيص الكيك',
+        inscriptionValue: 'كتابة على الكيك حسب طلبكم',
+        bespokeLabel: 'خدمات المناسبات',
+        bespokeValue: 'كيك ثلاثي الأبعاد وضيافة',
+      },
       photosTitle: 'لقطات من Crumbled',
       photosSubtitle: 'صور حقيقية من مطبخنا وتقديماتنا في الرياض.',
       productsTitle: 'تشكيلة المنتجات والخدمات',
       productsSubtitle: 'أصناف مختارة، كيك مخصص وثلاثي الأبعاد، وضيافة للمناسبات.',
       bespokeHeading: 'الطلبات الخاصة والضيافة',
+      howToOrderTitle: 'كيف تطلب من Crumbled',
+      howToOrderSubtitle: 'مسارات الطلب والزيارة المعتمدة في الرياض.',
+      howToOrderSteps: {
+        orderHubTitle: 'مركز الطلب',
+        orderHubDesc: 'الوصول المباشر إلى خيارات الطلب عبر الرابط الرسمي.',
+        instagramTitle: 'رسائل إنستغرام',
+        instagramDesc:
+          'للطلبات المخصصة، الكيك ثلاثي الأبعاد، الكتابة على الكيك، والضيافة.',
+        deliveryTitle: 'تطبيقات التوصيل',
+        deliveryDesc: 'متوفر عبر التطبيقات التالية بالاسم فقط:',
+        visitTitle: 'زيارة الفرع',
+        visitDesc: 'طريق الأمير تركي، حي المحمدية، الرياض 12364.',
+      },
+      faqTitle: 'أسئلة شائعة',
+      faqSubtitle: 'إجابات موجزة من المعلومات الموثقة عن Crumbled في الرياض.',
       locationHeading: 'زيارتنا في الرياض',
       ratingText: 'تقييم 4.6 على خرائط Google',
       deliveryHeading: 'متوفر عبر تطبيقات التوصيل',
     },
     products: {
       title: 'المنتجات والخدمات',
-      subtitle: 'تشكيلة Crumbled من الكيك والحلويات، الكيك المخصص وثلاثي الأبعاد، وخدمات الضيافة.',
+      subtitle:
+        'تشكيلة Crumbled من الكيك والحلويات، الكيك المخصص وثلاثي الأبعاد، وخدمات الضيافة.',
       inscriptionHighlight: 'يوجد لدينا كتابة على الكيك حسب طلبكم',
       filterAll: 'الكل',
       filterSignature: 'الحلويات والكيك',
       filterBespoke: 'الطلبات الخاصة والضيافة',
-      orderCtaTitle: 'للطلب والاستفسار',
-      orderCtaText: 'اطلب مباشرة عبر مركز الطلب أو تواصل معنا عبر رسائل إنستغرام للكيك المخصص والضيافة.',
+      searchPlaceholder: 'ابحث باسم الصنف أو الخدمة بالعربية أو الإنجليزية...',
+      searchLabel: 'البحث في المنتجات والخدمات',
+      resultsCount: (count: number) =>
+        count === 1 ? 'نتيجة واحدة' : `${count} نتائج`,
+      noResultsTitle: 'لا توجد نتائج مطابقة',
+      noResultsDesc: 'جرّب كلمة بحث أخرى أو أعِد عرض جميع الأصناف.',
       deliveryNote: 'كما تتوفر طلباتنا عبر تطبيقات التوصيل:',
+    },
+    customComposer: {
+      title: 'الطلبات المخصصة والضيافة',
+      subtitle:
+        'اختر نوع الخدمة واكتب نص رسالتك بحرية، ثم انسخها وأرسلها مباشرة عبر رسائل إنستغرام أو تصفح مركز الطلب.',
+      serviceLabel: 'نوع الطلب',
+      textLabel: 'نص رسالتك',
+      textPlaceholder: 'اكتب العبارة أو التفاصيل التي تود إرسالها...',
+      previewLabel: 'معاينة الرسالة الجاهزة للنسخ',
+      prefixService: 'نوع الطلب:',
+      prefixText: 'التفاصيل:',
     },
     gallery: {
       title: 'المعرض',
       subtitle: 'مجموعة الصور الحقيقية لأصناف وتقديمات Crumbled في الرياض.',
       tapHint: 'اضغط على أي صورة لعرضها بالحجم الكامل',
+      filterAll: 'الكل',
+      filterCakes: 'الكيك',
+      filterSweets: 'الحلويات والتقديمات',
       followPrompt: 'للمزيد من التحديثات والطلبات الخاصة عبر إنستغرام',
     },
     contact: {
       title: 'التواصل وزيارتنا',
-      subtitle: 'يسعدنا استقبال طلباتكم عبر مركز الطلب ورسائل إنستغرام، وزيارتكم في الرياض.',
+      subtitle:
+        'يسعدنا استقبال طلباتكم عبر مركز الطلب ورسائل إنستغرام، وزيارتكم في الرياض.',
       addressLabel: 'الموقع في الرياض',
       addressVerifiedLabel: 'العنوان الموثق',
       ratingLabel: 'تقييم Google Maps',
       ratingValue: '4.6 من 5',
       channelsTitle: 'قنوات الطلب والتواصل',
-      instagramDesc: 'للاستفسار عن الكيك المخصص، الكيك ثلاثي الأبعاد، والكتابة على الكيك حسب الطلب.',
+      instagramDesc:
+        'للاستفسار عن الكيك المخصص، الكيك ثلاثي الأبعاد، والكتابة على الكيك حسب الطلب.',
       orderHubDesc: 'للوصول المباشر إلى خيارات الطلب المتاحة.',
       deliveryTitle: 'تطبيقات التوصيل',
       deliveryDesc: 'يمكنكم الطلب أيضاً عبر تطبيقات التوصيل التالية في الرياض:',
@@ -268,6 +403,11 @@ export const COPY = {
       visitUs: 'Contact & Visit',
       copyAddress: 'Copy Address',
       addressCopied: 'Address Copied',
+      openGoogleMaps: 'Open on Google Maps',
+      copyMessage: 'Copy Message',
+      messageCopied: 'Message Copied',
+      clearSearch: 'Clear search',
+      resetFilters: 'Show All',
       switchToOtherLang: 'ع',
       switchLangAria: 'التبديل إلى اللغة العربية',
       toggleDarkAria: 'Switch to dark mode',
@@ -278,44 +418,93 @@ export const COPY = {
       prevPhotoAria: 'Previous photo',
       nextPhotoAria: 'Next photo',
       zoomPhotoAria: 'View full image',
+      selectHeroPhotoAria: 'Preview photo',
     },
     home: {
       inscriptionNote: 'Custom cake inscriptions available upon request',
+      quickHighlights: {
+        ratingLabel: 'Google Maps Rating',
+        ratingValue: '4.6 out of 5',
+        locationLabel: 'Location',
+        locationValue: 'Al Mohammadiyyah, Riyadh',
+        inscriptionLabel: 'Cake Personalization',
+        inscriptionValue: 'Custom cake inscriptions',
+        bespokeLabel: 'Special Occasions',
+        bespokeValue: '3D cakes & catering',
+      },
       photosTitle: 'From Crumbled Riyadh',
-      photosSubtitle: 'Real photography of our signature cakes and dessert presentations.',
+      photosSubtitle:
+        'Real photography of our signature cakes and dessert presentations.',
       productsTitle: 'Products & Services',
-      productsSubtitle: 'Signature cakes and sweets, custom and 3D cakes, and event catering.',
+      productsSubtitle:
+        'Signature cakes and sweets, custom and 3D cakes, and event catering.',
       bespokeHeading: 'Bespoke Cakes & Catering',
+      howToOrderTitle: 'How to Order from Crumbled',
+      howToOrderSubtitle: 'Our verified ordering and visit channels in Riyadh.',
+      howToOrderSteps: {
+        orderHubTitle: 'Order Hub',
+        orderHubDesc: 'Direct access to ordering options via our official link.',
+        instagramTitle: 'Instagram DM',
+        instagramDesc:
+          'For custom cakes, 3D cakes, cake inscriptions, and catering.',
+        deliveryTitle: 'Delivery Apps',
+        deliveryDesc: 'Available on the following delivery apps:',
+        visitTitle: 'Visit the Branch',
+        visitDesc: 'Prince Turki Road, Al Mohammadiyyah, Riyadh 12364.',
+      },
+      faqTitle: 'Frequently Asked Questions',
+      faqSubtitle: 'Concise answers based strictly on verified information.',
       locationHeading: 'Visit Us in Riyadh',
       ratingText: '4.6 rating on Google Maps',
       deliveryHeading: 'Available on delivery apps',
     },
     products: {
       title: 'Products & Services',
-      subtitle: 'Our signature cakes and sweets, custom and 3D creations, and bespoke catering.',
+      subtitle:
+        'Our signature cakes and sweets, custom and 3D creations, and bespoke catering.',
       inscriptionHighlight: 'Custom cake inscriptions available upon request',
       filterAll: 'All',
       filterSignature: 'Signature Items',
       filterBespoke: 'Custom & Catering',
-      orderCtaTitle: 'Ordering & Custom Requests',
-      orderCtaText: 'Order via our Order Hub or message us directly on Instagram for custom cakes and catering.',
+      searchPlaceholder: 'Search products or services in Arabic or English...',
+      searchLabel: 'Search products and services',
+      resultsCount: (count: number) =>
+        count === 1 ? '1 result' : `${count} results`,
+      noResultsTitle: 'No matching items',
+      noResultsDesc: 'Try a different keyword or reset the filters.',
       deliveryNote: 'Also available through delivery apps:',
+    },
+    customComposer: {
+      title: 'Custom Orders & Catering',
+      subtitle:
+        'Select a service, write your own message freely, then copy it to send via Instagram DM or visit our Order Hub.',
+      serviceLabel: 'Service Type',
+      textLabel: 'Your Message',
+      textPlaceholder: 'Write the inscription or note you would like to send...',
+      previewLabel: 'Message Preview Ready to Copy',
+      prefixService: 'Service:',
+      prefixText: 'Note:',
     },
     gallery: {
       title: 'Gallery',
       subtitle: 'Real photography featuring Crumbled Riyadh creations.',
       tapHint: 'Select any photo to inspect full screen',
+      filterAll: 'All',
+      filterCakes: 'Cakes',
+      filterSweets: 'Sweets & Presentations',
       followPrompt: 'Reach us directly on Instagram for custom orders',
     },
     contact: {
       title: 'Contact & Visit',
-      subtitle: 'Order via our Order Hub, message us on Instagram, or visit us in Al Mohammadiyyah, Riyadh.',
+      subtitle:
+        'Order via our Order Hub, message us on Instagram, or visit us in Al Mohammadiyyah, Riyadh.',
       addressLabel: 'Riyadh Location',
       addressVerifiedLabel: 'Verified Address',
       ratingLabel: 'Google Maps Rating',
       ratingValue: '4.6 out of 5',
       channelsTitle: 'Direct Channels',
-      instagramDesc: 'Message us for custom cakes, 3D cakes, catering, and personalized cake inscriptions.',
+      instagramDesc:
+        'Message us for custom cakes, 3D cakes, catering, and personalized cake inscriptions.',
       orderHubDesc: 'Direct access to our ordering hub.',
       deliveryTitle: 'Delivery Apps',
       deliveryDesc: 'Also available in Riyadh on the following delivery apps:',

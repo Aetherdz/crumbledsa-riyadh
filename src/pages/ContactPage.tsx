@@ -1,5 +1,12 @@
 import { useState } from 'react';
-import { Check, Copy, ExternalLink, Instagram, MapPin, Star } from 'lucide-react';
+import {
+  Check,
+  Copy,
+  ExternalLink,
+  Instagram,
+  MapPin,
+  Star,
+} from 'lucide-react';
 import {
   COPY,
   VERIFIED_INFO,
@@ -7,6 +14,7 @@ import {
   type Language,
 } from '../data/crumbledData';
 import { BrandBadge } from '../components/BrandBadge';
+import { CustomOrdersComposer } from '../components/CustomOrdersComposer';
 
 interface ContactPageProps {
   lang: Language;
@@ -136,29 +144,12 @@ export function ContactPage({ lang }: ContactPageProps) {
           </p>
         </section>
 
-        {/* Column 2: Verified Riyadh Address & Google Maps Rating */}
+        {/* Column 2: Verified Riyadh Address, Google Maps Search Link & 4.6 Rating */}
         <section className="lg:col-span-5 rounded-2xl p-7 sm:p-9 bg-[#0F2A44] text-[#FAF6EE] border border-[#C9A45C]/30 flex flex-col justify-between gap-8">
           <div className="space-y-6">
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex items-center gap-2 text-xs font-medium text-[#D8B66E]">
-                <MapPin className="w-4 h-4 shrink-0" aria-hidden="true" />
-                <span>{t.contact.addressLabel}</span>
-              </div>
-              <button
-                type="button"
-                onClick={handleCopyAddress}
-                aria-label={
-                  copied ? t.actions.addressCopied : t.actions.copyAddress
-                }
-                title={copied ? t.actions.addressCopied : t.actions.copyAddress}
-                className="w-10 h-10 rounded-full flex items-center justify-center border border-[#C9A45C]/40 bg-[#143454] text-[#D8B66E] hover:bg-[#1A426A] transition-colors cursor-pointer shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D8B66E]"
-              >
-                {copied ? (
-                  <Check className="w-4 h-4" aria-hidden="true" />
-                ) : (
-                  <Copy className="w-4 h-4" aria-hidden="true" />
-                )}
-              </button>
+            <div className="flex items-center gap-2 text-xs font-medium text-[#D8B66E]">
+              <MapPin className="w-4 h-4 shrink-0" aria-hidden="true" />
+              <span>{t.contact.addressLabel}</span>
             </div>
 
             <div className="space-y-3">
@@ -180,11 +171,40 @@ export function ContactPage({ lang }: ContactPageProps) {
               >
                 {VERIFIED_INFO.addressEn}
               </p>
-              {copied && (
-                <p
-                  role="status"
-                  className="text-xs font-medium text-[#D8B66E]"
+
+              {/* Copy Address + Open on Google Maps Search */}
+              <div className="flex flex-wrap items-center gap-2.5 pt-2">
+                <a
+                  href={VERIFIED_LINKS.googleMapsSearch}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-full text-xs sm:text-sm font-medium bg-[#C9A45C] text-[#081523] hover:bg-[#D8B66E] transition-colors whitespace-nowrap"
                 >
+                  <MapPin className="w-4 h-4 shrink-0" aria-hidden="true" />
+                  <span>{t.actions.openGoogleMaps}</span>
+                </a>
+
+                <button
+                  type="button"
+                  onClick={handleCopyAddress}
+                  aria-label={
+                    copied ? t.actions.addressCopied : t.actions.copyAddress
+                  }
+                  title={
+                    copied ? t.actions.addressCopied : t.actions.copyAddress
+                  }
+                  className="w-10 h-10 rounded-full flex items-center justify-center border border-[#C9A45C]/40 bg-[#143454] text-[#D8B66E] hover:bg-[#1A426A] transition-colors cursor-pointer shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D8B66E]"
+                >
+                  {copied ? (
+                    <Check className="w-4 h-4" aria-hidden="true" />
+                  ) : (
+                    <Copy className="w-4 h-4" aria-hidden="true" />
+                  )}
+                </button>
+              </div>
+
+              {copied && (
+                <p role="status" className="text-xs font-medium text-[#D8B66E]">
                   {t.actions.addressCopied}
                 </p>
               )}
@@ -224,6 +244,9 @@ export function ContactPage({ lang }: ContactPageProps) {
           </div>
         </section>
       </div>
+
+      {/* Custom Orders & Catering Message Composer */}
+      <CustomOrdersComposer lang={lang} />
     </div>
   );
 }
